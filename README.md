@@ -1,118 +1,140 @@
-# 🏥 Clinics Mobile
+# Clinics Mobile
 
-> **Aplicativo móvel para agregação e comparação de preços de exames médicos e consultas em Surubim - PE, com agendamento direto via WhatsApp.**
-
----
-
-## 👥 Integrantes da Dupla
-- **Aluno 1:** [Inserir Nome e Matrícula]
-- **Aluno 2:** [Inserir Nome e Matrícula]
+Aplicativo móvel para comparação de preços de exames médicos e consultas em clínicas e laboratórios de Surubim, Pernambuco, com agendamento direto pelo WhatsApp.
 
 ---
 
-## 📋 Contexto do Projeto
+## Integrantes do Projeto
 
-O **Clinics** é uma solução móvel desenvolvida para dar transparência aos custos de saúde na cidade de Surubim (Pernambuco). O aplicativo permite que a população consulte, compare valores praticados por diferentes clínicas e laboratórios locais, verifique preparos obrigatórios (como tempo de jejum e entrega de laudos) e entre em contato diretamente com a recepção da clínica escolhida via WhatsApp com mensagens pré-formatadas.
-
----
-
-## 📱 Telas Implementadas (Entrega 01 - Avaliação)
-
-Conforme os requisitos da **Entrega 01** (mínimo de 6 interfaces estilizadas e com navegação funcional):
-
-1. **Tela de Autenticação / Login (`/login`)**:
-   - Alternador segmentado "Entrar" e "Cadastrar".
-   - Seletor de método de login: Telefone (com máscara de DDD 81) ou E-mail.
-   - Botões de acesso rápido com Gov.br e Google.
-   - Opção de entrada rápida como visitante para consulta imediata.
-
-2. **Tela Inicial e Busca Centralizada (`/home`)**:
-   - Barra de busca com atalho para busca por voz e filtros avançados.
-   - Trilho horizontal de filtros por categoria: *Sangue*, *Raio-X*, *Consultas*, *Cardio*, *Ultrassom*.
-   - Seção de exames em alta na semana em Surubim (ex: Hemograma, Ultrassom, ECG).
-   - Banner de agendamento garantido via WhatsApp.
-   - Barra de navegação inferior (*Início*, *Busca*, *Perfil*).
-
-3. **Menu Lateral Drawer (Navegação Global)**:
-   - Identificação do usuário logado (foto, nome, telefone e selo de Paciente).
-   - Acesso rápido a Início, Busca e Comparação, Clínicas Parceiras, Perfil, Painel da Clínica e Sair.
-
-4. **Tela de Resultados de Busca & Comparação de Preços (`/search`)**:
-   - Comparação lado a lado de exames entre clínicas concorrentes em Surubim.
-   - Ordenação dinâmica por Menor Preço ou Melhor Avaliação.
-   - Destaque claro de preços, formas de pagamento (à vista, cartão, pix) e tempo de resultado.
-   - Botão direto de WhatsApp em cada card de clínica.
-
-5. **Tela de Detalhes do Exame (`/exam/:id`)**:
-   - Descrição clínica do procedimento.
-   - Guia completo de preparo (horas de jejum, ingestão de água, orientações para laudo).
-   - Bloco de informações da clínica com endereço físico e horários de funcionamento.
-   - Ação fixa inferior (CTA) para agendamento direto pelo WhatsApp.
-
-6. **Tela do Perfil Público da Clínica (`/clinic/:id`)**:
-   - Cabeçalho estético com avaliação, quantidade de exames e total de pacientes atendidos.
-   - Abas estilo Instagram:
-     - **Exames**: Tabela completa de exames oferecidos pela clínica com preços e atalhos.
-     - **Estrutura**: Galeria de fotos do ambiente (recepção, sala de coleta, aparelhos).
-     - **Horários**: Horários de funcionamento, convênios aceitos e localização.
-
-7. **Tela de Perfil do Usuário (`/profile`)**:
-   - Dados cadastrais do paciente (Nome, WhatsApp, E-mail, Cidade de Referência).
-   - Preferências de notificações de ofertas e segurança.
-   - Botão de logout com redirecionamento de volta ao login.
+- Márcio Ferreira Lima
+- Lucas Nascimento Barros
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Prototipação
 
-- **Linguagem & Framework:** Flutter (Dart 3)
-- **Design System:** Baseado em tokens do protótipo com fontes *Plus Jakarta Sans* e *Inter* via `google_fonts`.
-- **Roteamento:** `go_router` (rotas declarativas e navegação parametrizada).
-- **Gerenciamento de Estado:** `flutter_riverpod`.
-- **Integração Externa:** `url_launcher` para abertura do protocolo do WhatsApp (`https://wa.me/...`).
+O protótipo navegável de alta fidelidade das interfaces foi concebido no Google Stitch e serviu como base visual e de fluxo para a implementação no Flutter.
+
+- Link do protótipo no Stitch: [Visualizar no Google Stitch](https://stitch.withgoogle.com/preview/7892859562446275708?node-id=7bfe8cef52094b30b5569ae58ea2e7c9)
 
 ---
 
-## 🚀 Como Executar o Aplicativo
+## Galeria de Interfaces
 
-### Pré-requisitos
-- Flutter SDK instalado (versão 3.13+ ou superior).
-- Emulador Android, simulador iOS ou dispositivo físico conectado.
+Abaixo estão as interfaces construídas e funcionais da aplicação, seguindo a identidade visual estabelecida no protótipo.
 
-### Execução
+| Login e Cadastro | Início e Busca Centralizada | Menu Lateral |
+| :---: | :---: | :---: |
+| <img src="docs/prototype/pages/1._login_cadastro_onboarding/screen.png" width="240" alt="Login e Cadastro" /> | <img src="docs/prototype/pages/2._in_cio_busca_centralizada/screen.png" width="240" alt="Início e Busca" /> | <img src="docs/prototype/pages/3._menu_lateral_drawer/screen.png" width="240" alt="Menu Lateral" /> |
 
+| Resultados e Comparação | Detalhes do Exame | Ficha da Clínica |
+| :---: | :---: | :---: |
+| <img src="docs/prototype/pages/4._resultados_de_busca_compara_o/screen.png" width="240" alt="Comparação de Preços" /> | <img src="docs/prototype/pages/5._detalhes_do_exame/screen.png" width="240" alt="Detalhes do Exame" /> | <img src="docs/prototype/pages/9._perfil_p_blico_da_cl_nica/screen.png" width="240" alt="Ficha da Clínica" /> |
+
+| Perfil do Usuário |
+| :---: |
+| <img src="docs/prototype/pages/6._perfil_do_usu_rio/screen.png" width="240" alt="Perfil do Usuário" /> |
+
+---
+
+## Contexto do Projeto
+
+O Clinics nasceu da necessidade de trazer mais transparência aos custos de saúde em Surubim. Muitas pessoas perdem tempo ligando ou se deslocando até diferentes clínicas para descobrir valores de exames laboratoriais e consultas particulares.
+
+A plataforma centraliza essas informações em um ambiente simples e rápido. O paciente consulta o exame desejado, compara valores, entende o preparo necessário antes da coleta e entra em contato direto com a recepção da clínica via WhatsApp para agendar seu horário.
+
+---
+
+## Telas Implementadas
+
+1. **Autenticação e Acesso**
+   - Alternância entre as ações de entrar e criar conta.
+   - Acesso por número de telefone ou e-mail.
+   - Entrada integrada com conta Google.
+   - Opção de entrada rápida como visitante para pesquisa imediata.
+
+2. **Página Inicial e Busca**
+   - Barra de pesquisa com suporte visual a comando por voz e filtros.
+   - Categorias rápidas de exames: Sangue, Raio-X, Consultas, Cardio e Ultrassom.
+   - Painel com os exames mais buscados da semana na região.
+   - Barra de navegação inferior conectando o fluxo principal.
+
+3. **Menu Lateral de Navegação**
+   - Resumo do perfil do paciente logado.
+   - Acesso direto para as seções do aplicativo e suporte.
+
+4. **Resultados de Busca e Comparação**
+   - Lista comparativa de clínicas que realizam o exame pesquisado.
+   - Ordenação por menor preço ou melhor nota de avaliação.
+   - Valores destacados com formas de pagamento e prazo de entrega do laudo.
+   - Acesso imediato à conversa no WhatsApp de cada estabelecimento.
+
+5. **Detalhes e Preparo do Exame**
+   - Orientações de preparo, tempo de jejum e documentos solicitados.
+   - Informações de endereço e horário da clínica selecionada.
+   - Botão de contato no rodapé para início da conversa no WhatsApp com mensagem preenchida.
+
+6. **Ficha Pública da Clínica**
+   - Dados gerais da instituição, nota média e quantidade de exames oferecidos.
+   - Navegação por abas com catálogo de exames, fotos dos consultórios e horários de funcionamento.
+   - Botão para traçar rotas e contato no WhatsApp.
+
+7. **Perfil do Usuário**
+   - Informações cadastrais do paciente.
+   - Preferências de notificações e encerramento seguro da sessão.
+
+---
+
+## Tecnologias e Padrões
+
+- Flutter e Dart.
+- Google Fonts com as famílias tipográficas Plus Jakarta Sans e Inter.
+- GoRouter para o gerenciamento declarativo de rotas e parâmetros.
+- Riverpod para suporte ao estado global da aplicação.
+- URL Launcher para a integração direta com o aplicativo do WhatsApp.
+
+---
+
+## Como Executar o Projeto
+
+1. Acesse o diretório do aplicativo:
 ```bash
-# 1. Navegue até a pasta do aplicativo Flutter
 cd clinics
+```
 
-# 2. Instale as dependências
+2. Baixe as dependências do projeto:
+```bash
 flutter pub get
+```
 
-# 3. Execute os testes unitários e de widget
+3. Execute a bateria de testes automatizados:
+```bash
 flutter test
+```
 
-# 4. Inicie o aplicativo no emulador ou dispositivo
+4. Inicie o aplicativo em seu dispositivo ou emulador:
+```bash
 flutter run
 ```
 
 ---
 
-## 📂 Estrutura de Pastas do Projeto
+## Estrutura de Pastas
 
 ```
 clinics/
 ├── lib/
 │   ├── core/
-│   │   ├── router/          # Configuração de rotas (GoRouter)
-│   │   ├── theme/           # Tokens de cores e tema (AppTheme & AppColors)
-│   │   └── utils/           # Helper para acionamento do WhatsApp
+│   │   ├── router/
+│   │   ├── theme/
+│   │   └── utils/
 │   ├── features/
-│   │   ├── auth/            # Tela de Login e Cadastro
-│   │   ├── search/          # Início, Busca, Comparação e Entidades (Exam, Clinic, MockData)
-│   │   ├── exam/            # Tela de Detalhes e Preparo do Exame
-│   │   ├── clinic/          # Perfil Público da Clínica (Tabs: Exames, Fotos, Horários)
-│   │   └── profile/         # Perfil do Paciente e Menu Lateral (AppDrawer)
-│   └── main.dart            # Ponto de entrada do app Flutter
+│   │   ├── auth/
+│   │   ├── search/
+│   │   ├── exam/
+│   │   ├── clinic/
+│   │   └── profile/
+│   └── main.dart
 └── test/
-    └── widget_test.dart     # Testes automatizados de interface
+    └── widget_test.dart
 ```
