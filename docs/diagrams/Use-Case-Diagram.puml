@@ -7,15 +7,23 @@ left to right direction
 skinparam backgroundColor white
 skinparam packageStyle rectangle
 skinparam actorStyle stickman
+
 skinparam usecase {
     BackgroundColor #EAF2F8
     BorderColor #2C3E50
     ArrowColor #2C3E50
 }
+
 skinparam rectangle {
     BorderColor #2C3E50
 }
 
+
+' ============================================================
+' ATORES
+' ============================================================
+
+actor "Visitante\n(não autenticado)" as Visitante
 actor "Paciente\n(autenticado)" as Paciente
 actor "Gerente da clínica\n(autenticado)" as Gerente
 
@@ -23,40 +31,71 @@ actor "Google\n(autenticação integrada)" as Google
 actor "WhatsApp\n(contato/agendamento)" as WhatsApp
 
 
-rectangle "Clinics Mobile\nAplicativo para comparação de preços de exames médicos e consultas em clínicas e laboratórios de Surubim-PE,\ncom contato/agendamento direto via WhatsApp." {
+rectangle "Clinics Mobile" {
 
-    ' =========================
+    ' ========================================================
+    ' VISITANTE
+    ' ========================================================
+
+    usecase "Autenticar-se /\nCadastrar-se" as UC_Auth_Visitante
+
+    usecase "Pesquisar exames\ne consultas" as UC_Pesquisar
+
+    usecase "Filtrar/selecionar\ncategorias" as UC_Filtrar
+
+
+    ' ========================================================
     ' PACIENTE
-    ' =========================
+    ' ========================================================
 
     usecase "Autenticar-se /\nCadastrar-se" as UC_Auth_Paciente
-    usecase "Pesquisar exames\ne consultas" as UC_Pesquisar
-    usecase "Filtrar/selecionar\ncategorias" as UC_Filtrar
+
     usecase "Comparar preços\nentre clínicas" as UC_Comparar
+
     usecase "Visualizar detalhes\ndo exame" as UC_Detalhes
+
     usecase "Consultar preparo,\njejum e documentos" as UC_Preparo
+
     usecase "Visualizar perfil público\nda clínica" as UC_PerfilClinica
+
     usecase "Visualizar horários/\nendereço" as UC_Horarios
+
     usecase "Entrar em contato/solicitar\nagendamento via WhatsApp" as UC_WhatsApp
+
     usecase "Visualizar/editar perfil" as UC_Perfil
+
     usecase "Encerrar sessão" as UC_Logout
 
 
-    ' =========================
+    ' ========================================================
     ' GERENTE DA CLÍNICA
-    ' =========================
+    ' ========================================================
 
     usecase "Autenticar-se /\nCadastrar-se" as UC_Auth_Gerente
+
     usecase "Gerenciar painel\nda clínica" as UC_Painel
+
     usecase "Cadastrar exame" as UC_CadastrarExame
+
     usecase "Editar exame" as UC_EditarExame
+
     usecase "Excluir exame" as UC_ExcluirExame
+
     usecase "Consultar estatísticas" as UC_Estatisticas
 
 
-    ' =========================
+    ' ========================================================
+    ' ASSOCIAÇÕES — VISITANTE
+    ' ========================================================
+
+    Visitante --> UC_Auth_Visitante
+    Visitante --> UC_Pesquisar
+    Visitante --> UC_Filtrar
+
+
+    ' ========================================================
     ' ASSOCIAÇÕES — PACIENTE
-    ' =========================
+    ' ========================================================
 
     Paciente --> UC_Auth_Paciente
     Paciente --> UC_Pesquisar
@@ -71,9 +110,9 @@ rectangle "Clinics Mobile\nAplicativo para comparação de preços de exames mé
     Paciente --> UC_Logout
 
 
-    ' =========================
+    ' ========================================================
     ' ASSOCIAÇÕES — GERENTE
-    ' =========================
+    ' ========================================================
 
     Gerente --> UC_Auth_Gerente
     Gerente --> UC_Painel
@@ -83,21 +122,25 @@ rectangle "Clinics Mobile\nAplicativo para comparação de preços de exames mé
     Gerente --> UC_Estatisticas
 
 
-    ' =========================
-    ' INTEGRAÇÕES EXTERNAS
-    ' =========================
+    ' ========================================================
+    ' SISTEMAS EXTERNOS
+    ' ========================================================
 
+    Google --> UC_Auth_Visitante
     Google --> UC_Auth_Paciente
     Google --> UC_Auth_Gerente
 
     UC_WhatsApp --> WhatsApp
 
 
-    ' =========================
-    ' RELACIONAMENTOS INCLUDE
-    ' =========================
+    ' ========================================================
+    ' RELACIONAMENTOS <<include>>
+    ' ========================================================
+
+    UC_Auth_Visitante ..> Google : <<include>>
 
     UC_Auth_Paciente ..> Google : <<include>>
+
     UC_Auth_Gerente ..> Google : <<include>>
 
     UC_Pesquisar ..> UC_Filtrar : <<include>>
@@ -112,10 +155,20 @@ rectangle "Clinics Mobile\nAplicativo para comparação de preços de exames mé
 
 }
 
+
+' ============================================================
+' REGRA DE NEGÓCIO
+' ============================================================
+
 note right of UC_ExcluirExame
 O gerente só pode editar ou excluir
 exames pertencentes à própria clínica.
 end note
+
+
+' ============================================================
+' LEGENDA
+' ============================================================
 
 legend bottom
 |= Elemento |= Significado |
