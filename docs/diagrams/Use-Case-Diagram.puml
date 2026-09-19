@@ -1,0 +1,128 @@
+@startuml
+
+title Clinics Mobile — Diagrama de Casos de Uso
+
+left to right direction
+
+skinparam backgroundColor white
+skinparam packageStyle rectangle
+skinparam actorStyle stickman
+skinparam usecase {
+    BackgroundColor #EAF2F8
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+skinparam rectangle {
+    BorderColor #2C3E50
+}
+
+actor "Paciente\n(autenticado)" as Paciente
+actor "Gerente da clínica\n(autenticado)" as Gerente
+
+actor "Google\n(autenticação integrada)" as Google
+actor "WhatsApp\n(contato/agendamento)" as WhatsApp
+
+
+rectangle "Clinics Mobile\nAplicativo para comparação de preços de exames médicos e consultas em clínicas e laboratórios de Surubim-PE,\ncom contato/agendamento direto via WhatsApp." {
+
+    ' =========================
+    ' PACIENTE
+    ' =========================
+
+    usecase "Autenticar-se /\nCadastrar-se" as UC_Auth_Paciente
+    usecase "Pesquisar exames\ne consultas" as UC_Pesquisar
+    usecase "Filtrar/selecionar\ncategorias" as UC_Filtrar
+    usecase "Comparar preços\nentre clínicas" as UC_Comparar
+    usecase "Visualizar detalhes\ndo exame" as UC_Detalhes
+    usecase "Consultar preparo,\njejum e documentos" as UC_Preparo
+    usecase "Visualizar perfil público\nda clínica" as UC_PerfilClinica
+    usecase "Visualizar horários/\nendereço" as UC_Horarios
+    usecase "Entrar em contato/solicitar\nagendamento via WhatsApp" as UC_WhatsApp
+    usecase "Visualizar/editar perfil" as UC_Perfil
+    usecase "Encerrar sessão" as UC_Logout
+
+
+    ' =========================
+    ' GERENTE DA CLÍNICA
+    ' =========================
+
+    usecase "Autenticar-se /\nCadastrar-se" as UC_Auth_Gerente
+    usecase "Gerenciar painel\nda clínica" as UC_Painel
+    usecase "Cadastrar exame" as UC_CadastrarExame
+    usecase "Editar exame" as UC_EditarExame
+    usecase "Excluir exame" as UC_ExcluirExame
+    usecase "Consultar estatísticas" as UC_Estatisticas
+
+
+    ' =========================
+    ' ASSOCIAÇÕES — PACIENTE
+    ' =========================
+
+    Paciente --> UC_Auth_Paciente
+    Paciente --> UC_Pesquisar
+    Paciente --> UC_Filtrar
+    Paciente --> UC_Comparar
+    Paciente --> UC_Detalhes
+    Paciente --> UC_Preparo
+    Paciente --> UC_PerfilClinica
+    Paciente --> UC_Horarios
+    Paciente --> UC_WhatsApp
+    Paciente --> UC_Perfil
+    Paciente --> UC_Logout
+
+
+    ' =========================
+    ' ASSOCIAÇÕES — GERENTE
+    ' =========================
+
+    Gerente --> UC_Auth_Gerente
+    Gerente --> UC_Painel
+    Gerente --> UC_CadastrarExame
+    Gerente --> UC_EditarExame
+    Gerente --> UC_ExcluirExame
+    Gerente --> UC_Estatisticas
+
+
+    ' =========================
+    ' INTEGRAÇÕES EXTERNAS
+    ' =========================
+
+    Google --> UC_Auth_Paciente
+    Google --> UC_Auth_Gerente
+
+    UC_WhatsApp --> WhatsApp
+
+
+    ' =========================
+    ' RELACIONAMENTOS INCLUDE
+    ' =========================
+
+    UC_Auth_Paciente ..> Google : <<include>>
+    UC_Auth_Gerente ..> Google : <<include>>
+
+    UC_Pesquisar ..> UC_Filtrar : <<include>>
+
+    UC_Comparar ..> UC_Detalhes : <<include>>
+
+    UC_Preparo ..> UC_Detalhes : <<include>>
+
+    UC_PerfilClinica ..> UC_Horarios : <<include>>
+
+    UC_WhatsApp ..> WhatsApp : <<include>>
+
+}
+
+note right of UC_ExcluirExame
+O gerente só pode editar ou excluir
+exames pertencentes à própria clínica.
+end note
+
+legend bottom
+|= Elemento |= Significado |
+| Actor | Usuário ou sistema externo |
+| Oval | Caso de uso |
+| Linha contínua | Associação |
+| Linha tracejada | <<include>> |
+endlegend
+
+@enduml
