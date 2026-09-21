@@ -95,6 +95,12 @@ A plataforma centraliza essas informações em um ambiente simples e rápido. O 
 
 ---
 
+| Diagrama de Casos de Uso |
+| :---: |
+| <img src="docs\diagrams\Use-Case-Diagram.png" width="240" alt="Diagrama de Casos de Uso" /> |
+
+---
+
 ## Como Executar o Projeto
 
 1. Acesse o diretório do aplicativo:
