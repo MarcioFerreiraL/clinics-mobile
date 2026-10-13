@@ -2,6 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class WhatsAppHelper {
+  /// Abre um link `wa.me` já montado (ex.: o devolvido pela API).
+  static Future<bool> openUrl(BuildContext context, String url) async {
+    try {
+      if (await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+        return true;
+      }
+    } catch (_) {}
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Não foi possível abrir o WhatsApp.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+    return false;
+  }
+
   /// Opens WhatsApp with a pre-filled booking message.
   static Future<bool> openChat({
     required BuildContext context,
