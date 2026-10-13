@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../profile/presentation/widgets/app_drawer.dart';
@@ -34,8 +35,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     context.push('/search?category=${Uri.encodeQueryComponent(category)}');
   }
 
+  final SpeechToText _speech = SpeechToText();
+  bool _listening = false;
+
+  Future<void> _toggleVoice() async {
+    if (_listening) {
+      await _speech.stop();
+      setState(() => _listening = false);
+      return;
+    }
+    final available = await _speech.initialize(
+      onStatus: (status) {
+        if (status == 'done' || status == 'notListening') {
+          if (mounted) setState(() => _listening = false);
+        }
+      },
+      onError: (_) {
+        if (mounted) setState(() => _listening = false);
+      },
+    );
+    if (!available) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Reconhecimento de voz indisponível ou permissão negada.',
+            ),
+          ),
+        );
+      }
+      return;
+    }
+    setState(() => _listening = true);
+    await _speech.listen(
+      listenOptions: SpeechListenOptions(
+        localeId: 'pt_BR',
+        listenMode: ListenMode.search,
+      ),
+      onResult: (result) {
+        searchController.text = result.recognizedWords;
+        if (result.finalResult && result.recognizedWords.trim().isNotEmpty) {
+          _onSearchSubmit(result.recognizedWords.trim());
+        }
+      },
+    );
+  }
+
   @override
   void dispose() {
+    _speech.cancel();
     searchController.dispose();
     super.dispose();
   }
@@ -214,18 +262,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(
-                            Icons.mic,
-                            color: AppColors.slateSecondary,
+                          tooltip: 'Buscar por voz',
+                          icon: Icon(
+                            _listening ? Icons.mic : Icons.mic_none,
+                            color: _listening
+                                ? Colors.redAccent
+                                : AppColors.slateSecondary,
                             size: 20,
                           ),
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Pesquisa por voz ativa...'),
-                              ),
-                            );
-                          },
+                          onPressed: _toggleVoice,
                         ),
                         IconButton(
                           icon: Container(
