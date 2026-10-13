@@ -179,4 +179,5 @@ flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080   # (a definir no ap
 - **2026-10-12** · Levantamento do PDF, análise tela a tela, decisão de escopo (12 UCs, 9 tabelas, 4 recursos de dispositivo). Roadmap criado.
 - **2026-10-12** · Back-end completo: docs 01 a 08, migrações V1 a V6, 12 casos de uso, OpenAPI, 154 testes, README. 49 commits em `clinics-backend`.
 - **2026-10-12** · Este arquivo de contexto criado.
-- **Próximo:** publicar o back-end no GitHub e iniciar a integração do app Flutter.
+- **2026-10-13** · Repositórios publicados no GitHub (branch `develop`). App integrado à API: cliente `dio` com JWT, login/cadastro com sessão persistida, busca (categoria, ordenação, GPS), detalhes com contato WhatsApp (UC07), ficha da clínica com avaliações (UC10), favoritos (UC09), perfil com economia, edição, senha e foto (UC08, UC11, UC12). Recursos de dispositivo: GPS, voz, câmera/galeria e notificações locais (queda de preço e lembrete de preparo). Mocks removidos. Compila em debug com `--dart-define=API_BASE_URL`.
+- **Próximo:** testar no aparelho físico, escrever testes do app, atualizar documentos antigos (seção 8) e preparar a apresentação.
