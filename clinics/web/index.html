@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <!-- O build define o caminho base (ex.: /app/) no lugar deste marcador. -->
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Compare preços de exames e consultas em clínicas de Surubim-PE.">
+  <meta name="theme-color" content="#0284C7">
+
+  <!-- iOS: permite instalar na tela inicial como app -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Clinics">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>Clinics</title>
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    html, body { margin: 0; height: 100%; background: #fff; }
+    #boot { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 14px; background: #fff; transition: opacity .3s ease; }
+    #boot img { width: 96px; height: 96px; border-radius: 22px; animation: hop 0.9s ease-in-out infinite alternate; }
+    #boot p { margin: 0; font: 600 14px/1.2 system-ui, sans-serif; color: #64748b; }
+    #boot .shadow { width: 56px; height: 8px; border-radius: 50%; background: #0284c7; opacity: .16;
+                    animation: sh 0.9s ease-in-out infinite alternate; margin-top: -8px; }
+    @keyframes hop { from { transform: translateY(0); } to { transform: translateY(-14px); } }
+    @keyframes sh { from { transform: scaleX(1); } to { transform: scaleX(.7); } }
+  </style>
+</head>
+<body>
+  <div id="boot"><img src="icons/Icon-192.png" alt=""><div class="shadow"></div><p>Carregando o Clinics…</p></div>
+  <script>
+    // Some a tela de carregamento quando o Flutter desenha o primeiro quadro.
+    window.addEventListener('flutter-first-frame', function () {
+      var boot = document.getElementById('boot');
+      if (boot) { boot.style.opacity = '0'; setTimeout(function () { boot.remove(); }, 350); }
+    });
+  </script>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
