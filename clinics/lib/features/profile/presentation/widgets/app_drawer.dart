@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/user_avatar.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -34,19 +37,10 @@ class AppDrawer extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
+                      UserAvatar(
+                        name: user?.fullName,
+                        imageUrl: avatar,
                         radius: 28,
-                        backgroundColor: AppColors.atmosphericBlue,
-                        backgroundImage: avatar == null
-                            ? null
-                            : NetworkImage(avatar),
-                        child: avatar == null
-                            ? const Icon(
-                                Icons.person,
-                                size: 32,
-                                color: AppColors.primary,
-                              )
-                            : null,
                       ),
                       const SizedBox(width: 14),
                       Expanded(

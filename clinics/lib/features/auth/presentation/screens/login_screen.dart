@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/app_logo.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -121,18 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         elevation: 0,
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppColors.atmosphericBlue,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.health_and_safety,
-                color: AppColors.primary,
-                size: 20,
-              ),
-            ),
+            AppLogo(size: 28),
             const SizedBox(width: 8),
             Text(
               'Clinics',
@@ -177,21 +169,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 12),
-              Center(
-                child: Container(
-                  width: 54,
-                  height: 54,
-                  decoration: const BoxDecoration(
-                    color: AppColors.atmosphericBlue,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.health_and_safety,
-                    size: 28,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ),
+              Center(child: AppLogo(size: 54)),
               const SizedBox(height: 16),
               Text(
                 isLoginTab ? 'Acesse sua conta' : 'Crie sua conta',
@@ -476,7 +454,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: AppColors.primaryDeep,
                               ),
                             )
                           : Row(
@@ -511,6 +489,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              Center(
+                child: Text(
+                  'por MárcioDev e Lucas',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

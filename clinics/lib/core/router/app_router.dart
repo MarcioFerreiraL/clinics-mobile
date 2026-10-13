@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/favorites/presentation/screens/favorites_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/search/presentation/screens/home_screen.dart';
@@ -36,11 +37,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 });
 
 final _routes = <RouteBase>[
-  GoRoute(
-    path: '/',
-    builder: (context, state) =>
-        const Scaffold(body: Center(child: CircularProgressIndicator())),
-  ),
+  GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
   GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
   GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
   GoRoute(

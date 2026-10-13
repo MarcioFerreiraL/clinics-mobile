@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/theme/app_colors.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_exception.dart';
@@ -92,7 +95,7 @@ class _ChangePasswordSheetState extends ConsumerState<ChangePasswordSheet> {
                     width: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: AppColors.primaryDeep,
                     ),
                   )
                 : const Text('Alterar senha'),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/clinics_loader.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,7 +28,7 @@ class ReviewsTab extends ConsumerWidget {
     final mine = loggedIn ? ref.watch(_myReviewProvider(clinicId)).value : null;
 
     return reviews.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const LoadingView(),
       error: (e, _) => ErrorView(
         error: e,
         onRetry: () => ref.invalidate(clinicReviewsProvider(clinicId)),
@@ -227,7 +230,7 @@ class _ReviewFormState extends ConsumerState<_ReviewForm> {
                     width: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: AppColors.primaryDeep,
                     ),
                   )
                 : const Text('Salvar avaliação'),

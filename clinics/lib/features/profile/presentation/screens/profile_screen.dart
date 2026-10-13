@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/user_avatar.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -90,19 +93,10 @@ class ProfileScreen extends ConsumerWidget {
                     onTap: () => _pickAvatar(context, ref),
                     child: Stack(
                       children: [
-                        CircleAvatar(
+                        UserAvatar(
+                          name: user.fullName,
+                          imageUrl: avatar,
                           radius: 40,
-                          backgroundColor: AppColors.atmosphericBlue,
-                          backgroundImage: avatar == null
-                              ? null
-                              : NetworkImage(avatar),
-                          child: avatar == null
-                              ? const Icon(
-                                  Icons.person,
-                                  size: 44,
-                                  color: AppColors.primary,
-                                )
-                              : null,
                         ),
                         Positioned(
                           bottom: 0,

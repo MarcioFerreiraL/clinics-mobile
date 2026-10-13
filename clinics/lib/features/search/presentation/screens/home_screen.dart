@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/app_logo.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -108,18 +111,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppColors.atmosphericBlue,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.health_and_safety,
-                color: AppColors.primary,
-                size: 20,
-              ),
-            ),
+            AppLogo(size: 28),
             const SizedBox(width: 8),
             Text(
               'Clinics',
@@ -380,7 +372,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           selected: isSelected,
                           onSelected: (_) => _onCategorySelected(cat),
                           backgroundColor: AppColors.surfaceCanvas,
-                          selectedColor: AppColors.primary,
+                          selectedColor: AppColors.primarySoft,
                           labelStyle: TextStyle(
                             color: isSelected
                                 ? Colors.white
@@ -392,7 +384,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             borderRadius: BorderRadius.circular(999),
                             side: BorderSide(
                               color: isSelected
-                                  ? AppColors.primary
+                                  ? AppColors.primarySoft
                                   : AppColors.borderOutline,
                             ),
                           ),

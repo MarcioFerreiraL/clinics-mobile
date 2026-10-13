@@ -11,8 +11,8 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         onPrimary: Colors.white,
-        secondary: AppColors.whatsApp,
-        onSecondary: Colors.white,
+        secondary: AppColors.mint,
+        onSecondary: AppColors.mintDeep,
         surface: AppColors.surfaceWhite,
         onSurface: AppColors.slateDeep,
         onSurfaceVariant: AppColors.slateSecondary,
@@ -107,8 +107,8 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
+          backgroundColor: AppColors.primarySoft,
+          foregroundColor: AppColors.primaryDeep,
           minimumSize: const Size.fromHeight(48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/clinics_loader.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -167,10 +170,12 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                         _selectedCategory = cat;
                       });
                     },
-                    selectedColor: AppColors.primary,
+                    selectedColor: AppColors.primarySoft,
                     backgroundColor: AppColors.surfaceCanvas,
                     labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : AppColors.slateDeep,
+                      color: isSelected
+                          ? AppColors.primaryDeep
+                          : AppColors.slateDeep,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
@@ -178,7 +183,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                       borderRadius: BorderRadius.circular(999),
                       side: BorderSide(
                         color: isSelected
-                            ? AppColors.primary
+                            ? AppColors.primarySoft
                             : AppColors.borderOutline,
                       ),
                     ),
@@ -283,7 +288,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           // Exam Comparison Cards List
           Expanded(
             child: results.isLoading && !results.hasValue
-                ? const Center(child: CircularProgressIndicator())
+                ? const SkeletonCards()
                 : results.hasError && !results.hasValue
                 ? Center(
                     child: Column(
@@ -527,7 +532,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                                             'Melhor preço',
                                             style: theme.textTheme.labelSmall
                                                 ?.copyWith(
-                                                  color: AppColors.whatsApp,
+                                                  color: AppColors.mintDeep,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                           )
@@ -536,7 +541,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                                             'Economize ${formatPrice(exam.savings)}',
                                             style: theme.textTheme.labelSmall
                                                 ?.copyWith(
-                                                  color: AppColors.whatsApp,
+                                                  color: AppColors.mintDeep,
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                           ),
@@ -583,7 +588,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                                   ElevatedButton.icon(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.whatsApp,
-                                      foregroundColor: Colors.white,
+                                      foregroundColor: AppColors.mintDeep,
                                       minimumSize: const Size(120, 42),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/clinics_loader.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,7 +28,7 @@ class ExamDetailScreen extends ConsumerWidget {
       data: (data) => _ExamBody(exam: data),
       loading: () => Scaffold(
         appBar: AppBar(title: const Text('Detalhes do Exame')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const LoadingView(),
       ),
       error: (e, _) => Scaffold(
         appBar: AppBar(title: const Text('Detalhes do Exame')),
@@ -472,7 +475,7 @@ class _ExamBody extends ConsumerWidget {
           child: ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.whatsApp,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.mintDeep,
               minimumSize: const Size.fromHeight(50),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

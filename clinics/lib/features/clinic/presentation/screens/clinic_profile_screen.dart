@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/clinics_loader.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -24,7 +27,7 @@ class ClinicProfileScreen extends ConsumerWidget {
       data: (data) => _ClinicBody(clinic: data),
       loading: () => Scaffold(
         appBar: AppBar(title: const Text('Ficha da Clínica')),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const LoadingView(),
       ),
       error: (e, _) => Scaffold(
         appBar: AppBar(title: const Text('Ficha da Clínica')),
@@ -254,7 +257,7 @@ class _ClinicBodyState extends ConsumerState<_ClinicBody>
                                 child: ElevatedButton.icon(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.whatsApp,
-                                    foregroundColor: Colors.white,
+                                    foregroundColor: AppColors.mintDeep,
                                     minimumSize: const Size.fromHeight(42),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+
+import '../../../../core/widgets/clinics_loader.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,7 +20,7 @@ class FavoritesScreen extends ConsumerWidget {
       backgroundColor: AppColors.surfaceCanvas,
       appBar: AppBar(title: const Text('Exames favoritos')),
       body: favorites.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const LoadingView(),
         error: (e, _) => ErrorView(
           error: e,
           onRetry: () => ref.invalidate(favoritesProvider),
