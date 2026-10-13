@@ -57,6 +57,7 @@ jobs:
     steps:
       - name: Aviso quando a chave de assinatura não está configurada
         if: env.HAS_KEYSTORE != 'true'
+        working-directory: .
         run: echo "::warning::Configure os secrets ANDROID_KEYSTORE_* para publicar o APK assinado."
       - uses: actions/checkout@v4
         if: env.HAS_KEYSTORE == 'true'
