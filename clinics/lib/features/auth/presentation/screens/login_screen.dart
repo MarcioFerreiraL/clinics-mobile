@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../providers/auth_provider.dart';
@@ -86,7 +87,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 color: AppColors.atmosphericBlue,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.health_and_safety, color: AppColors.primary, size: 20),
+              child: const Icon(
+                Icons.health_and_safety,
+                color: AppColors.primary,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 8),
             Text(
@@ -108,11 +113,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.location_on, size: 14, color: AppColors.primary),
+                const Icon(
+                  Icons.location_on,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Surubim, PE',
-                  style: theme.textTheme.labelSmall?.copyWith(color: AppColors.primary),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: AppColors.primary,
+                  ),
                 ),
               ],
             ),
@@ -134,7 +145,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     color: AppColors.atmosphericBlue,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.health_and_safety, size: 28, color: AppColors.primary),
+                  child: const Icon(
+                    Icons.health_and_safety,
+                    size: 28,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -170,15 +185,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
-                            color: isLoginTab ? Colors.white : Colors.transparent,
+                            color: isLoginTab
+                                ? Colors.white
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(999),
                             boxShadow: isLoginTab
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
-                                    )
+                                    ),
                                   ]
                                 : null,
                           ),
@@ -186,7 +205,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: Text(
                             'Entrar',
                             style: theme.textTheme.labelLarge?.copyWith(
-                              color: isLoginTab ? AppColors.primary : AppColors.slateSecondary,
+                              color: isLoginTab
+                                  ? AppColors.primary
+                                  : AppColors.slateSecondary,
                             ),
                           ),
                         ),
@@ -198,15 +219,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
-                            color: !isLoginTab ? Colors.white : Colors.transparent,
+                            color: !isLoginTab
+                                ? Colors.white
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(999),
                             boxShadow: !isLoginTab
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
-                                    )
+                                    ),
                                   ]
                                 : null,
                           ),
@@ -214,7 +239,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: Text(
                             'Cadastrar',
                             style: theme.textTheme.labelLarge?.copyWith(
-                              color: !isLoginTab ? AppColors.primary : AppColors.slateSecondary,
+                              color: !isLoginTab
+                                  ? AppColors.primary
+                                  : AppColors.slateSecondary,
                             ),
                           ),
                         ),
@@ -238,7 +265,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!isLoginTab) ...[
-                      Text('Nome Completo', style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+                      Text(
+                        'Nome Completo',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       const SizedBox(height: 6),
                       TextField(
                         controller: nameController,
@@ -250,7 +282,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const SizedBox(height: 14),
                     ],
 
-                    Text('WhatsApp ou Celular', style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+                    Text(
+                      'WhatsApp ou Celular',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 6),
                     TextField(
                       controller: phoneController,
@@ -261,21 +298,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         errorText: apiError?.fieldMessage('phone'),
                         suffixIcon: Container(
                           margin: const EdgeInsets.all(8),
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.surfaceMuted,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: const Text(
                             'DDD 81',
-                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.slateSecondary),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.slateSecondary,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 14),
 
-                    Text('Sua senha', style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+                    Text(
+                      'Sua senha',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                     const SizedBox(height: 6),
                     TextField(
                       controller: passwordController,
@@ -286,11 +335,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         errorText: apiError?.fieldMessage('password'),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             size: 20,
                             color: AppColors.slateSecondary,
                           ),
-                          onPressed: () => setState(() => obscurePassword = !obscurePassword),
+                          onPressed: () => setState(
+                            () => obscurePassword = !obscurePassword,
+                          ),
                         ),
                       ),
                     ),
@@ -299,7 +352,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     if (errorMessage != null) ...[
                       Text(
                         errorMessage!,
-                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.error,
+                        ),
                       ),
                       const SizedBox(height: 12),
                     ],
@@ -309,12 +364,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           ? const SizedBox(
                               height: 20,
                               width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(isLoginTab ? 'Entrar na Conta' : 'Criar Conta'),
+                                Text(
+                                  isLoginTab
+                                      ? 'Entrar na Conta'
+                                      : 'Criar Conta',
+                                ),
                                 const SizedBox(width: 8),
                                 const Icon(Icons.arrow_forward, size: 18),
                               ],

@@ -12,19 +12,20 @@ class AuthRepository {
 
   AuthRepository(this._dio, this._storage);
 
-  Future<UserProfile> login({required String phone, required String password}) =>
-      _authenticate('/auth/login', {'phone': phone, 'password': password});
+  Future<UserProfile> login({
+    required String phone,
+    required String password,
+  }) => _authenticate('/auth/login', {'phone': phone, 'password': password});
 
   Future<UserProfile> register({
     required String fullName,
     required String phone,
     required String password,
-  }) =>
-      _authenticate('/auth/register', {
-        'full_name': fullName,
-        'phone': phone,
-        'password': password,
-      });
+  }) => _authenticate('/auth/register', {
+    'full_name': fullName,
+    'phone': phone,
+    'password': password,
+  });
 
   /// Recupera a sessão salva; devolve null se não houver token válido.
   Future<UserProfile?> restoreSession() async {
@@ -42,7 +43,10 @@ class AuthRepository {
 
   Future<void> logout() => _storage.clear();
 
-  Future<UserProfile> _authenticate(String path, Map<String, dynamic> body) async {
+  Future<UserProfile> _authenticate(
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     try {
       final res = await _dio.post(path, data: body);
       final data = res.data as Map<String, dynamic>;
@@ -56,5 +60,6 @@ class AuthRepository {
 }
 
 final authRepositoryProvider = Provider(
-  (ref) => AuthRepository(ref.watch(dioProvider), ref.watch(tokenStorageProvider)),
+  (ref) =>
+      AuthRepository(ref.watch(dioProvider), ref.watch(tokenStorageProvider)),
 );

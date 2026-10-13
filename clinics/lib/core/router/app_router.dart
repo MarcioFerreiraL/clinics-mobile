@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/favorites/presentation/screens/favorites_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/search/presentation/screens/home_screen.dart';
 import '../../features/search/presentation/screens/search_results_screen.dart';
@@ -10,7 +11,7 @@ import '../../features/exam/presentation/screens/exam_detail_screen.dart';
 import '../../features/clinic/presentation/screens/clinic_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 
-const _protectedRoutes = ['/profile'];
+const _protectedRoutes = ['/profile', '/favorites'];
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
@@ -65,6 +66,10 @@ final _routes = <RouteBase>[
       final clinicId = state.pathParameters['id'] ?? '';
       return ClinicProfileScreen(clinicId: clinicId);
     },
+  ),
+  GoRoute(
+    path: '/favorites',
+    builder: (context, state) => const FavoritesScreen(),
   ),
   GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
 ];

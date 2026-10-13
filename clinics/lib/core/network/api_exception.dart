@@ -33,7 +33,8 @@ class ApiException implements Exception {
   factory ApiException.fromDio(DioException e) {
     final data = e.response?.data;
     if (data is Map<String, dynamic> && data['code'] is String) {
-      final errors = (data['errors'] as List?)
+      final errors =
+          (data['errors'] as List?)
               ?.whereType<Map>()
               .map((m) => FieldError('${m['field']}', '${m['message']}'))
               .toList() ??
@@ -46,7 +47,8 @@ class ApiException implements Exception {
         fieldErrors: errors,
       );
     }
-    final offline = e.type == DioExceptionType.connectionError ||
+    final offline =
+        e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
         e.type == DioExceptionType.sendTimeout;
@@ -65,7 +67,8 @@ class ApiException implements Exception {
     'INVALID_CREDENTIALS': 'Telefone ou senha incorretos.',
     'PHONE_ALREADY_REGISTERED': 'Este telefone já possui cadastro.',
     'INVALID_PHONE': 'Telefone inválido. Use DDD + número.',
-    'WEAK_PASSWORD': 'A senha deve ter 8 ou mais caracteres, com letras e números.',
+    'WEAK_PASSWORD':
+        'A senha deve ter 8 ou mais caracteres, com letras e números.',
     'UNAUTHENTICATED': 'Sua sessão expirou. Entre novamente.',
     'EXAM_NOT_FOUND': 'Exame não encontrado.',
     'CLINIC_NOT_FOUND': 'Clínica não encontrada.',

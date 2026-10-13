@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/theme/app_colors.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -55,7 +56,10 @@ class AppDrawer extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.atmosphericBlue,
                                 borderRadius: BorderRadius.circular(999),
@@ -75,7 +79,10 @@ class AppDrawer extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
@@ -84,7 +91,11 @@ class AppDrawer extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.location_on, size: 16, color: AppColors.primary),
+                        const Icon(
+                          Icons.location_on,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Surubim, PE • Centro',
@@ -141,7 +152,11 @@ class AppDrawer extends StatelessWidget {
                       context.push('/profile');
                     },
                   ),
-                  const Divider(color: AppColors.borderOutline, indent: 16, endIndent: 16),
+                  const Divider(
+                    color: AppColors.borderOutline,
+                    indent: 16,
+                    endIndent: 16,
+                  ),
                   _buildDrawerItem(
                     context: context,
                     icon: Icons.dashboard_customize_outlined,
@@ -151,7 +166,9 @@ class AppDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Acesso ao Painel da Clínica (Gestor).'),
+                          content: Text(
+                            'Acesso ao Painel da Clínica (Gestor).',
+                          ),
                         ),
                       );
                     },
@@ -164,7 +181,9 @@ class AppDrawer extends StatelessWidget {
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Suporte Clinics: contato@clinics.com.br'),
+                          content: Text(
+                            'Suporte Clinics: contato@clinics.com.br',
+                          ),
                         ),
                       );
                     },
@@ -179,12 +198,16 @@ class AppDrawer extends StatelessWidget {
               child: Column(
                 children: [
                   ListTile(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     tileColor: AppColors.surfaceMuted,
                     leading: const Icon(Icons.logout, color: AppColors.error),
                     title: Text(
                       'Sair da Conta',
-                      style: theme.textTheme.labelLarge?.copyWith(color: AppColors.error),
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: AppColors.error,
+                      ),
                     ),
                     onTap: () {
                       Navigator.pop(context);
@@ -216,14 +239,14 @@ class AppDrawer extends StatelessWidget {
       leading: Icon(icon, color: AppColors.primary),
       title: Text(
         title,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+        style: Theme.of(context).textTheme.bodyMedium
+            ?.copyWith(fontWeight: FontWeight.w600),
       ),
       subtitle: subtitle != null
           ? Text(
               subtitle,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11),
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(fontSize: 11),
             )
           : null,
       onTap: onTap,

@@ -13,7 +13,10 @@ class FavoritesRepository {
 
   Future<List<FavoriteExam>> list() async {
     try {
-      final res = await _dio.get('/me/favorites', queryParameters: {'size': 50});
+      final res = await _dio.get(
+        '/me/favorites',
+        queryParameters: {'size': 50},
+      );
       return (res.data['data'] as List)
           .map((e) => FavoriteExam.fromJson(e as Map<String, dynamic>))
           .toList();
@@ -32,12 +35,15 @@ class FavoritesRepository {
   }
 }
 
-final favoritesRepositoryProvider =
-    Provider((ref) => FavoritesRepository(ref.watch(dioProvider)));
+final favoritesRepositoryProvider = Provider(
+  (ref) => FavoritesRepository(ref.watch(dioProvider)),
+);
 
 /// Favoritos do paciente logado (vazio para visitante).
 final favoritesProvider =
-    AsyncNotifierProvider<FavoritesNotifier, List<FavoriteExam>>(FavoritesNotifier.new);
+    AsyncNotifierProvider<FavoritesNotifier, List<FavoriteExam>>(
+      FavoritesNotifier.new,
+    );
 
 class FavoritesNotifier extends AsyncNotifier<List<FavoriteExam>> {
   @override
@@ -52,7 +58,9 @@ class FavoritesNotifier extends AsyncNotifier<List<FavoriteExam>> {
 
   Future<void> toggle(String examTypeId) async {
     final favorite = !isFavorite(examTypeId);
-    await ref.read(favoritesRepositoryProvider).set(examTypeId, favorite: favorite);
+    await ref
+        .read(favoritesRepositoryProvider)
+        .set(examTypeId, favorite: favorite);
     ref.invalidateSelf();
     await future;
   }

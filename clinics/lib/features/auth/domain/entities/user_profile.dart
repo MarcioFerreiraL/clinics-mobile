@@ -20,14 +20,14 @@ class UserProfile {
   String get firstName => fullName.split(' ').first;
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
-        id: json['id'] as String,
-        fullName: json['full_name'] as String,
-        phone: json['phone'] as String,
-        role: json['role'] as String,
-        email: json['email'] as String?,
-        birthDate: json['birth_date'] == null
-            ? null
-            : DateTime.parse(json['birth_date'] as String),
-        avatarUrl: json['avatar_url'] as String?,
-      );
+    id: json['id'] as String,
+    fullName: json['full_name'] as String,
+    phone: json['phone'] as String,
+    role: json['role'] as String,
+    email: json['email'] as String?,
+    birthDate: json['birth_date'] == null
+        ? null
+        : DateTime.parse(json['birth_date'] as String),
+    avatarUrl: json['avatar_url'] as String?,
+  );
 }

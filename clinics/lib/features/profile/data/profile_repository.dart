@@ -24,45 +24,48 @@ class ProfileRepository {
     required String fullName,
     String? email,
     DateTime? birthDate,
-  }) =>
-      _call(() async {
-        final res = await _dio.put('/me', data: {
-          'full_name': fullName,
-          'email': email ?? '',
-          if (birthDate != null)
-            'birth_date': birthDate.toIso8601String().substring(0, 10),
-        });
-        return UserProfile.fromJson(res.data as Map<String, dynamic>);
-      });
+  }) => _call(() async {
+    final res = await _dio.put(
+      '/me',
+      data: {
+        'full_name': fullName,
+        'email': email ?? '',
+        if (birthDate != null)
+          'birth_date': birthDate.toIso8601String().substring(0, 10),
+      },
+    );
+    return UserProfile.fromJson(res.data as Map<String, dynamic>);
+  });
 
   Future<UserProfile> uploadAvatar(String path) => _call(() async {
-        final isPng = path.toLowerCase().endsWith('.png');
-        final form = FormData.fromMap({
-          'file': await MultipartFile.fromFile(
-            path,
-            filename: isPng ? 'avatar.png' : 'avatar.jpg',
-            contentType: MediaType('image', isPng ? 'png' : 'jpeg'),
-          ),
-        });
-        final res = await _dio.put('/me/avatar', data: form);
-        return UserProfile.fromJson(res.data as Map<String, dynamic>);
-      });
+    final isPng = path.toLowerCase().endsWith('.png');
+    final form = FormData.fromMap({
+      'file': await MultipartFile.fromFile(
+        path,
+        filename: isPng ? 'avatar.png' : 'avatar.jpg',
+        contentType: MediaType('image', isPng ? 'png' : 'jpeg'),
+      ),
+    });
+    final res = await _dio.put('/me/avatar', data: form);
+    return UserProfile.fromJson(res.data as Map<String, dynamic>);
+  });
 
   Future<void> changePassword(String current, String next) => _call(
-        () => _dio.put('/me/password', data: {
-          'current_password': current,
-          'new_password': next,
-        }),
-      );
+    () => _dio.put(
+      '/me/password',
+      data: {'current_password': current, 'new_password': next},
+    ),
+  );
 
   Future<Savings> savings() => _call(() async {
-        final res = await _dio.get('/me/savings');
-        return Savings.fromJson(res.data as Map<String, dynamic>);
-      });
+    final res = await _dio.get('/me/savings');
+    return Savings.fromJson(res.data as Map<String, dynamic>);
+  });
 }
 
-final profileRepositoryProvider =
-    Provider((ref) => ProfileRepository(ref.watch(dioProvider)));
+final profileRepositoryProvider = Provider(
+  (ref) => ProfileRepository(ref.watch(dioProvider)),
+);
 
 final savingsProvider = FutureProvider.autoDispose(
   (ref) => ref.watch(profileRepositoryProvider).savings(),

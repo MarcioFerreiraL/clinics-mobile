@@ -8,7 +8,8 @@ import '../../domain/entities/user_profile.dart';
 class AuthNotifier extends AsyncNotifier<UserProfile?> {
   @override
   Future<UserProfile?> build() async {
-    ref.read(sessionEventsProvider).onExpired = () => state = const AsyncData(null);
+    ref.read(sessionEventsProvider).onExpired = () =>
+        state = const AsyncData(null);
     try {
       return await ref.read(authRepositoryProvider).restoreSession();
     } catch (_) {
@@ -40,5 +41,6 @@ class AuthNotifier extends AsyncNotifier<UserProfile?> {
   void setUser(UserProfile user) => state = AsyncData(user);
 }
 
-final authProvider =
-    AsyncNotifierProvider<AuthNotifier, UserProfile?>(AuthNotifier.new);
+final authProvider = AsyncNotifierProvider<AuthNotifier, UserProfile?>(
+  AuthNotifier.new,
+);
