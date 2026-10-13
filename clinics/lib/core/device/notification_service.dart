@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -8,6 +9,9 @@ import 'package:timezone/timezone.dart' as tz;
 class NotificationService {
   final _plugin = FlutterLocalNotificationsPlugin();
   bool _ready = false;
+
+  /// Notificações locais só existem no app instalado (Android); o navegador não suporta.
+  static bool get isSupported => !kIsWeb;
 
   static const _details = NotificationDetails(
     android: AndroidNotificationDetails(
@@ -20,7 +24,7 @@ class NotificationService {
   );
 
   Future<void> _init() async {
-    if (_ready) return;
+    if (_ready || !isSupported) return;
     await _plugin.initialize(
       settings: const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/launcher_icon'),
@@ -42,6 +46,7 @@ class NotificationService {
     required String examName,
     required String newPrice,
   }) async {
+    if (!isSupported) return;
     await _init();
     await _plugin.show(
       id: id,
@@ -58,6 +63,7 @@ class NotificationService {
     required String preparation,
     required DateTime when,
   }) async {
+    if (!isSupported) return;
     await _init();
     await _plugin.zonedSchedule(
       id: id,

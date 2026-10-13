@@ -53,9 +53,7 @@ class ProfileScreen extends ConsumerWidget {
     if (file == null) return;
 
     try {
-      final user = await ref
-          .read(profileRepositoryProvider)
-          .uploadAvatar(file.path);
+      final user = await ref.read(profileRepositoryProvider).uploadAvatar(file);
       ref.read(authProvider.notifier).setUser(user);
     } on ApiException catch (e) {
       if (context.mounted) {

@@ -47,6 +47,14 @@ class _ExamBody extends ConsumerWidget {
   const _ExamBody({required this.exam});
 
   Future<void> _scheduleReminder(BuildContext context, WidgetRef ref) async {
+    if (!NotificationService.isSupported) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Lembretes só funcionam no app instalado (Android).'),
+        ),
+      );
+      return;
+    }
     final now = DateTime.now();
     final date = await showDatePicker(
       context: context,

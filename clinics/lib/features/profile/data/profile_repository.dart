@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exception.dart';
@@ -37,11 +38,12 @@ class ProfileRepository {
     return UserProfile.fromJson(res.data as Map<String, dynamic>);
   });
 
-  Future<UserProfile> uploadAvatar(String path) => _call(() async {
-    final isPng = path.toLowerCase().endsWith('.png');
+  Future<UserProfile> uploadAvatar(XFile image) => _call(() async {
+    // Bytes em vez de caminho de arquivo: funciona também no navegador.
+    final isPng = image.name.toLowerCase().endsWith('.png');
     final form = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        path,
+      'file': MultipartFile.fromBytes(
+        await image.readAsBytes(),
         filename: isPng ? 'avatar.png' : 'avatar.jpg',
         contentType: MediaType('image', isPng ? 'png' : 'jpeg'),
       ),
