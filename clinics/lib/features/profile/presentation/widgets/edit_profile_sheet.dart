@@ -125,6 +125,26 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            TextFormField(
+              initialValue: widget.user.phone,
+              enabled: false,
+              decoration: const InputDecoration(
+                labelText: 'WhatsApp / Celular',
+                prefixIcon: Icon(Icons.lock_outline, size: 18),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextFormField(
+              initialValue: widget.user.cpf ?? 'Não informado',
+              enabled: false,
+              decoration: const InputDecoration(
+                labelText: 'CPF',
+                prefixIcon: Icon(Icons.lock_outline, size: 18),
+                helperText: 'Telefone e CPF identificam sua conta e não podem ser alterados.',
+                helperMaxLines: 2,
+              ),
+            ),
             if (_error != null && _error!.fieldErrors.isEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
