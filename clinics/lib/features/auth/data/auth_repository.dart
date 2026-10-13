@@ -20,10 +20,16 @@ class AuthRepository {
   Future<UserProfile> register({
     required String fullName,
     required String phone,
+    required String cpf,
+    required String email,
+    required String birthDate,
     required String password,
   }) => _authenticate('/auth/register', {
     'full_name': fullName,
     'phone': phone,
+    'cpf': cpf,
+    'email': email,
+    'birth_date': birthDate,
     'password': password,
   });
 

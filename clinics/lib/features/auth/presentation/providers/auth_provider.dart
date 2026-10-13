@@ -25,10 +25,24 @@ class AuthNotifier extends AsyncNotifier<UserProfile?> {
     state = AsyncData(user);
   }
 
-  Future<void> register(String fullName, String phone, String password) async {
+  Future<void> register({
+    required String fullName,
+    required String phone,
+    required String cpf,
+    required String email,
+    required String birthDate,
+    required String password,
+  }) async {
     final user = await ref
         .read(authRepositoryProvider)
-        .register(fullName: fullName, phone: phone, password: password);
+        .register(
+          fullName: fullName,
+          phone: phone,
+          cpf: cpf,
+          email: email,
+          birthDate: birthDate,
+          password: password,
+        );
     state = AsyncData(user);
   }
 

@@ -3,6 +3,7 @@ class UserProfile {
   final String fullName;
   final String phone;
   final String role;
+  final String? cpf;
   final String? email;
   final DateTime? birthDate;
   final String? avatarUrl;
@@ -12,6 +13,7 @@ class UserProfile {
     required this.fullName,
     required this.phone,
     required this.role,
+    this.cpf,
     this.email,
     this.birthDate,
     this.avatarUrl,

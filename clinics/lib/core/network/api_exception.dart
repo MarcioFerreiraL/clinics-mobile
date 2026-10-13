@@ -66,6 +66,10 @@ class ApiException implements Exception {
   static const _messages = {
     'INVALID_CREDENTIALS': 'Telefone ou senha incorretos.',
     'PHONE_ALREADY_REGISTERED': 'Este telefone já possui cadastro.',
+    'INVALID_CPF': 'CPF inválido. Confira os números.',
+    'CPF_ALREADY_REGISTERED': 'Este CPF já possui cadastro.',
+    'INVALID_EMAIL': 'Informe um e-mail válido.',
+    'INVALID_BIRTH_DATE': 'Data de nascimento inválida.',
     'INVALID_PHONE': 'Telefone inválido. Use DDD + número.',
     'WEAK_PASSWORD':
         'A senha deve ter 8 ou mais caracteres, com letras e números.',

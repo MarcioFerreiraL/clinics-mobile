@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_exception.dart';
+import '../../../../core/utils/input_masks.dart';
 import '../../../auth/domain/entities/user_profile.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../data/profile_repository.dart';
@@ -18,7 +19,11 @@ class EditProfileSheet extends ConsumerStatefulWidget {
 class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
   late final _name = TextEditingController(text: widget.user.fullName);
   late final _email = TextEditingController(text: widget.user.email);
-  late DateTime? _birth = widget.user.birthDate;
+  late final _birth = TextEditingController(
+    text: widget.user.birthDate == null
+        ? ''
+        : formatBrDate(widget.user.birthDate!),
+  );
   bool _saving = false;
   ApiException? _error;
 
@@ -26,20 +31,32 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
   void dispose() {
     _name.dispose();
     _email.dispose();
+    _birth.dispose();
     super.dispose();
   }
 
   Future<void> _pickBirth() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _birth ?? DateTime(1990),
+      initialDate: parseBrDate(_birth.text) ?? DateTime(1990),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
-    if (picked != null) setState(() => _birth = picked);
+    if (picked != null) _birth.text = formatBrDate(picked);
   }
 
   Future<void> _save() async {
+    final birth = parseBrDate(_birth.text);
+    if (_birth.text.isNotEmpty &&
+        (birth == null || birth.isAfter(DateTime.now()))) {
+      setState(
+        () => _error = const ApiException(
+          code: 'INVALID_BIRTH_DATE',
+          message: 'Informe uma data de nascimento válida (dd/mm/aaaa).',
+        ),
+      );
+      return;
+    }
     setState(() {
       _saving = true;
       _error = null;
@@ -50,7 +67,7 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
           .updateProfile(
             fullName: _name.text.trim(),
             email: _email.text.trim(),
-            birthDate: _birth,
+            birthDate: birth,
           );
       ref.read(authProvider.notifier).setUser(user);
       if (mounted) Navigator.pop(context);
@@ -63,7 +80,6 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final birth = _birth;
     return Padding(
       padding: EdgeInsets.fromLTRB(
         20,
@@ -96,14 +112,18 @@ class _EditProfileSheetState extends ConsumerState<EditProfileSheet> {
               ),
             ),
             const SizedBox(height: 12),
-            OutlinedButton.icon(
-              icon: const Icon(Icons.cake_outlined),
-              label: Text(
-                birth == null
-                    ? 'Data de nascimento'
-                    : '${birth.day.toString().padLeft(2, '0')}/${birth.month.toString().padLeft(2, '0')}/${birth.year}',
+            TextField(
+              controller: _birth,
+              keyboardType: TextInputType.number,
+              inputFormatters: [MaskFormatter.date],
+              decoration: InputDecoration(
+                labelText: 'Data de nascimento',
+                hintText: 'dd/mm/aaaa',
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  onPressed: _pickBirth,
+                ),
               ),
-              onPressed: _pickBirth,
             ),
             if (_error != null && _error!.fieldErrors.isEmpty)
               Padding(

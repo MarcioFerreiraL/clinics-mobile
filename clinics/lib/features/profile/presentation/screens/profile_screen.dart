@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/network/api_config.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/input_masks.dart';
 import '../../../auth/domain/entities/user_profile.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../search/domain/money.dart';
@@ -192,6 +193,7 @@ class ProfileScreen extends ConsumerWidget {
               children: [
                 _tile(Icons.badge_outlined, 'Nome Completo', user.fullName),
                 _tile(Icons.phone_android, 'WhatsApp', user.phone),
+                _tile(Icons.badge, 'CPF', user.cpf ?? 'Não informado'),
                 _tile(
                   Icons.email_outlined,
                   'E-mail',
@@ -286,8 +288,7 @@ class ProfileScreen extends ConsumerWidget {
 
   String _birth(UserProfile user) {
     final d = user.birthDate;
-    if (d == null) return 'Não informado';
-    return '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+    return d == null ? 'Não informado' : formatBrDate(d);
   }
 
   Widget _sectionHeader(BuildContext context, String title) => Align(

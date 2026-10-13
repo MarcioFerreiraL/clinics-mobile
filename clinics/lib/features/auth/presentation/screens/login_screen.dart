@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/input_masks.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -23,24 +24,56 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   final nameController = TextEditingController();
+  final cpfController = TextEditingController();
+  final emailController = TextEditingController();
+  final birthController = TextEditingController();
 
   @override
   void dispose() {
     phoneController.dispose();
     passwordController.dispose();
     nameController.dispose();
+    cpfController.dispose();
+    emailController.dispose();
+    birthController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickBirthDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: parseBrDate(birthController.text) ?? DateTime(1990),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) birthController.text = formatBrDate(picked);
   }
 
   Future<void> _handleAuth() async {
     final name = nameController.text.trim();
-    final phone = phoneController.text.trim();
+    final phone = onlyDigits(phoneController.text);
+    final cpf = onlyDigits(cpfController.text);
+    final email = emailController.text.trim();
+    final birth = parseBrDate(birthController.text);
     final password = passwordController.text;
 
-    if ((!isLoginTab && name.isEmpty) || phone.isEmpty || password.isEmpty) {
+    String? problem;
+    if (phone.isEmpty || password.isEmpty) {
+      problem = 'Preencha todos os campos.';
+    } else if (!isLoginTab) {
+      if (name.isEmpty ||
+          cpf.isEmpty ||
+          email.isEmpty ||
+          birthController.text.isEmpty) {
+        problem = 'Preencha todos os campos.';
+      } else if (birth == null || birth.isAfter(DateTime.now())) {
+        problem = 'Informe uma data de nascimento válida (dd/mm/aaaa).';
+      }
+    }
+    if (problem != null) {
       setState(() {
         apiError = null;
-        errorMessage = 'Preencha todos os campos.';
+        errorMessage = problem;
       });
       return;
     }
@@ -55,7 +88,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (isLoginTab) {
         await auth.login(phone, password);
       } else {
-        await auth.register(name, phone, password);
+        await auth.register(
+          fullName: name,
+          phone: phone,
+          cpf: cpf,
+          email: email,
+          birthDate: toIsoDate(birth!),
+          password: password,
+        );
       }
       if (mounted) context.go('/home');
     } on ApiException catch (e) {
@@ -292,6 +332,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     TextField(
                       controller: phoneController,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: [MaskFormatter.phone],
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.phone_iphone, size: 20),
                         hintText: '(81) 99876-5432',
@@ -318,6 +359,75 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 14),
+
+                    if (!isLoginTab) ...[
+                      Text(
+                        'CPF',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: cpfController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [MaskFormatter.cpf],
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.badge_outlined,
+                            size: 20,
+                          ),
+                          hintText: '000.000.000-00',
+                          errorText: apiError?.fieldMessage('cpf'),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        'E-mail',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.email_outlined,
+                            size: 20,
+                          ),
+                          hintText: 'seuemail@exemplo.com',
+                          errorText: apiError?.fieldMessage('email'),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        'Data de nascimento',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: birthController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [MaskFormatter.date],
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.cake_outlined, size: 20),
+                          hintText: 'dd/mm/aaaa',
+                          errorText: apiError?.fieldMessage('birth_date'),
+                          suffixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.calendar_month_outlined,
+                              size: 20,
+                            ),
+                            onPressed: _pickBirthDate,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                    ],
 
                     Text(
                       'Sua senha',
