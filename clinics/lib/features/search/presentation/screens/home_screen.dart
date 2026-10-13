@@ -1,30 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../profile/presentation/widgets/app_drawer.dart';
-import '../../data/mock_data.dart';
+import '../../data/search_repository.dart';
+import '../../domain/exam_offer.dart';
+import '../../domain/money.dart';
+import 'search_results_screen.dart' show searchCategories;
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   String selectedCategory = 'Todos';
   final searchController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void _onSearchSubmit(String query) {
-    context.push('/search?query=$query&category=$selectedCategory');
+    context.push(
+      '/search?query=${Uri.encodeQueryComponent(query)}&category=${Uri.encodeQueryComponent(selectedCategory)}',
+    );
   }
 
   void _onCategorySelected(String category) {
     setState(() {
       selectedCategory = category;
     });
-    context.push('/search?category=$category');
+    context.push('/search?category=${Uri.encodeQueryComponent(category)}');
   }
 
   @override
@@ -54,7 +61,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: AppColors.atmosphericBlue,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.health_and_safety, color: AppColors.primary, size: 20),
+              child: const Icon(
+                Icons.health_and_safety,
+                color: AppColors.primary,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 8),
             Text(
@@ -75,11 +86,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.location_on, size: 14, color: AppColors.primary),
+                const Icon(
+                  Icons.location_on,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Surubim, PE',
-                  style: theme.textTheme.labelSmall?.copyWith(color: AppColors.primary),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: AppColors.primary,
+                  ),
                 ),
               ],
             ),
@@ -105,7 +122,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   // Location Pill
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.atmosphericBlue,
                       borderRadius: BorderRadius.circular(999),
@@ -113,7 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.near_me, size: 14, color: AppColors.primary),
+                        const Icon(
+                          Icons.near_me,
+                          size: 14,
+                          color: AppColors.primary,
+                        ),
                         const SizedBox(width: 6),
                         Text(
                           'Surubim, PE • Centro',
@@ -168,7 +192,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       children: [
                         const SizedBox(width: 16),
-                        const Icon(Icons.search, color: AppColors.slateSecondary),
+                        const Icon(
+                          Icons.search,
+                          color: AppColors.slateSecondary,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: TextField(
@@ -180,15 +207,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
                               fillColor: Colors.transparent,
-                              contentPadding: EdgeInsets.symmetric(vertical: 14),
+                              contentPadding: EdgeInsets.symmetric(
+                                vertical: 14,
+                              ),
                             ),
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.mic, color: AppColors.slateSecondary, size: 20),
+                          icon: const Icon(
+                            Icons.mic,
+                            color: AppColors.slateSecondary,
+                            size: 20,
+                          ),
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Pesquisa por voz ativa...')),
+                              const SnackBar(
+                                content: Text('Pesquisa por voz ativa...'),
+                              ),
                             );
                           },
                         ),
@@ -199,7 +234,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: AppColors.atmosphericBlue,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.tune, color: AppColors.primary, size: 16),
+                            child: const Icon(
+                              Icons.tune,
+                              color: AppColors.primary,
+                              size: 16,
+                            ),
                           ),
                           onPressed: () => context.push('/search'),
                         ),
@@ -213,11 +252,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.verified, size: 16, color: AppColors.actionEmerald),
+                      const Icon(
+                        Icons.verified,
+                        size: 16,
+                        color: AppColors.actionEmerald,
+                      ),
                       const SizedBox(width: 6),
                       Text(
-                        '140+ exames em clínicas de Surubim',
-                        style: theme.textTheme.bodySmall?.copyWith(fontSize: 12),
+                        'Compare preços em clínicas de Surubim',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ),
@@ -277,27 +322,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       scrollDirection: Axis.horizontal,
-                      itemCount: MockData.categories.length,
+                      itemCount: searchCategories.length,
                       separatorBuilder: (_, _) => const SizedBox(width: 8),
                       itemBuilder: (context, index) {
-                        final cat = MockData.categories[index];
-                        final isSelected = selectedCategory == cat['key'];
+                        final cat = searchCategories[index];
+                        final isSelected = selectedCategory == cat;
 
                         return FilterChip(
-                          label: Text(cat['name']),
+                          label: Text(cat),
                           selected: isSelected,
-                          onSelected: (_) => _onCategorySelected(cat['key']),
+                          onSelected: (_) => _onCategorySelected(cat),
                           backgroundColor: AppColors.surfaceCanvas,
                           selectedColor: AppColors.primary,
                           labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : AppColors.slateDeep,
+                            color: isSelected
+                                ? Colors.white
+                                : AppColors.slateDeep,
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(999),
                             side: BorderSide(
-                              color: isSelected ? AppColors.primary : AppColors.borderOutline,
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.borderOutline,
                             ),
                           ),
                           showCheckmark: false,
@@ -316,7 +365,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.trending_up, size: 20, color: AppColors.primary),
+                            const Icon(
+                              Icons.trending_up,
+                              size: 20,
+                              color: AppColors.primary,
+                            ),
                             const SizedBox(width: 8),
                             Text(
                               'Mais buscados em Surubim',
@@ -328,7 +381,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         Text(
                           'Esta semana',
-                          style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 11,
+                          ),
                         ),
                       ],
                     ),
@@ -338,36 +393,39 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Trending items
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      children: [
-                        _buildTrendingCard(
-                          context: context,
-                          title: 'Hemograma Completo',
-                          subtitle: 'Laboratorial • Sangue',
-                          minPrice: 18.00,
-                          icon: Icons.bloodtype,
-                          onTap: () => context.push('/search?query=Hemograma'),
+                    child: ref
+                        .watch(trendingProvider)
+                        .when(
+                          loading: () => const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                          error: (_, _) => TextButton.icon(
+                            onPressed: () => ref.invalidate(trendingProvider),
+                            icon: const Icon(Icons.refresh),
+                            label: const Text(
+                              'Não foi possível carregar. Tentar novamente',
+                            ),
+                          ),
+                          data: (items) => Column(
+                            children: [
+                              for (final TrendingExam item in items) ...[
+                                _buildTrendingCard(
+                                  context: context,
+                                  title: item.name,
+                                  subtitle:
+                                      '${item.category} • ${item.offersCount} clínicas',
+                                  minPrice: item.minPrice,
+                                  icon: Icons.biotech,
+                                  onTap: () => context.push(
+                                    '/search?query=${Uri.encodeQueryComponent(item.name)}',
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                              ],
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 10),
-                        _buildTrendingCard(
-                          context: context,
-                          title: 'Ultrassom Abdominal Total',
-                          subtitle: 'Diagnóstico por Imagem',
-                          minPrice: 90.00,
-                          icon: Icons.personal_injury,
-                          onTap: () => context.push('/search?query=Ultrassom'),
-                        ),
-                        const SizedBox(height: 10),
-                        _buildTrendingCard(
-                          context: context,
-                          title: 'Eletrocardiograma (ECG)',
-                          subtitle: 'Cardiologia Clínica',
-                          minPrice: 45.00,
-                          icon: Icons.monitor_heart,
-                          onTap: () => context.push('/search?query=Eletrocardiograma'),
-                        ),
-                      ],
-                    ),
                   ),
 
                   const SizedBox(height: 20),
@@ -390,7 +448,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Colors.white,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.chat_bubble_outline, size: 20, color: AppColors.actionEmerald),
+                            child: const Icon(
+                              Icons.chat_bubble_outline,
+                              size: 20,
+                              color: AppColors.actionEmerald,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -406,12 +468,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 Text(
                                   'Converse diretamente com a recepção da clínica',
-                                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    fontSize: 11,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          const Icon(Icons.chevron_right, color: AppColors.slateSecondary),
+                          const Icon(
+                            Icons.chevron_right,
+                            color: AppColors.slateSecondary,
+                          ),
                         ],
                       ),
                     ),
@@ -499,7 +566,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Text(subtitle, style: theme.textTheme.bodySmall?.copyWith(fontSize: 11)),
+                  Text(
+                    subtitle,
+                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
+                  ),
                 ],
               ),
             ),
@@ -511,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
                 ),
                 Text(
-                  'R\$ ${minPrice.toStringAsFixed(0)}',
+                  formatPrice(minPrice),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: AppColors.primary,
@@ -535,7 +605,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Icon(Icons.chevron_right, size: 14, color: AppColors.primary),
+                  const Icon(
+                    Icons.chevron_right,
+                    size: 14,
+                    color: AppColors.primary,
+                  ),
                 ],
               ),
             ),

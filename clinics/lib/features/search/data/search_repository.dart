@@ -26,14 +26,13 @@ class SearchQuery {
     String? sortBy,
     double? lat,
     double? lng,
-  }) =>
-      SearchQuery(
-        query: query ?? this.query,
-        category: category ?? this.category,
-        sortBy: sortBy ?? this.sortBy,
-        lat: lat ?? this.lat,
-        lng: lng ?? this.lng,
-      );
+  }) => SearchQuery(
+    query: query ?? this.query,
+    category: category ?? this.category,
+    sortBy: sortBy ?? this.sortBy,
+    lat: lat ?? this.lat,
+    lng: lng ?? this.lng,
+  );
 
   @override
   bool operator ==(Object other) =>
@@ -48,13 +47,13 @@ class SearchQuery {
   int get hashCode => Object.hash(query, category, sortBy, lat, lng);
 
   Map<String, dynamic> toParams(int page) => {
-        if (query.trim().isNotEmpty) 'query': query.trim(),
-        if (category != 'Todos') 'category': category,
-        'sort_by': sortBy,
-        if (lat != null && lng != null) ...{'lat': lat, 'lng': lng},
-        'page': page,
-        'size': 50,
-      };
+    if (query.trim().isNotEmpty) 'query': query.trim(),
+    if (category != 'Todos') 'category': category,
+    'sort_by': sortBy,
+    if (lat != null && lng != null) ...{'lat': lat, 'lng': lng},
+    'page': page,
+    'size': 50,
+  };
 }
 
 class SearchRepository {
@@ -64,8 +63,14 @@ class SearchRepository {
 
   Future<Page<ExamOffer>> search(SearchQuery query, {int page = 0}) async {
     try {
-      final res = await _dio.get('/exams/search', queryParameters: query.toParams(page));
-      return Page.fromJson(res.data as Map<String, dynamic>, ExamOffer.fromJson);
+      final res = await _dio.get(
+        '/exams/search',
+        queryParameters: query.toParams(page),
+      );
+      return Page.fromJson(
+        res.data as Map<String, dynamic>,
+        ExamOffer.fromJson,
+      );
     } on DioException catch (e) {
       throw ApiException.fromDio(e);
     }
@@ -83,13 +88,14 @@ class SearchRepository {
   }
 }
 
-final searchRepositoryProvider =
-    Provider((ref) => SearchRepository(ref.watch(dioProvider)));
-
-final searchResultsProvider =
-    FutureProvider.autoDispose.family<Page<ExamOffer>, SearchQuery>(
-  (ref, query) => ref.watch(searchRepositoryProvider).search(query),
+final searchRepositoryProvider = Provider(
+  (ref) => SearchRepository(ref.watch(dioProvider)),
 );
+
+final searchResultsProvider = FutureProvider.autoDispose
+    .family<Page<ExamOffer>, SearchQuery>(
+      (ref, query) => ref.watch(searchRepositoryProvider).search(query),
+    );
 
 final trendingProvider = FutureProvider.autoDispose(
   (ref) => ref.watch(searchRepositoryProvider).trending(),
