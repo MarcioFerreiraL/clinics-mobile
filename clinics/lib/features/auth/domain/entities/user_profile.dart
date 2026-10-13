@@ -26,6 +26,7 @@ class UserProfile {
     fullName: json['full_name'] as String,
     phone: json['phone'] as String,
     role: json['role'] as String,
+    cpf: json['cpf'] as String?,
     email: json['email'] as String?,
     birthDate: json['birth_date'] == null
         ? null

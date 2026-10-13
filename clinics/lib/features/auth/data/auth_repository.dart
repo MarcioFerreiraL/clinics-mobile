@@ -57,8 +57,17 @@ class AuthRepository {
       final res = await _dio.post(path, data: body);
       final data = res.data as Map<String, dynamic>;
       await _storage.save(data['token'] as String);
-      final user = data['user'] as Map<String, dynamic>;
-      return UserProfile.fromJson(user);
+      final summary = UserProfile.fromJson(
+        data['user'] as Map<String, dynamic>,
+      );
+      // A resposta de login/cadastro traz só um resumo (sem CPF, e-mail e nascimento):
+      // busca o perfil completo para o app já abrir com todos os dados.
+      try {
+        final me = await _dio.get('/me');
+        return UserProfile.fromJson(me.data as Map<String, dynamic>);
+      } on DioException {
+        return summary;
+      }
     } on DioException catch (e) {
       throw ApiException.fromDio(e);
     }
