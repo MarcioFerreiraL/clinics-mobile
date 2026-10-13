@@ -1,14 +1,26 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:clinics/features/auth/domain/entities/user_profile.dart';
+import 'package:clinics/features/auth/presentation/providers/auth_provider.dart';
 import 'package:clinics/main.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+class _GuestAuth extends AuthNotifier {
+  @override
+  Future<UserProfile?> build() async => null;
+}
 
 void main() {
-  testWidgets('ClinicsApp smoke test and login screen render', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const ClinicsApp());
+  testWidgets('visitante cai na tela de login', (tester) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [authProvider.overrideWith(_GuestAuth.new)],
+        child: const ClinicsApp(),
+      ),
+    );
     await tester.pumpAndSettle();
 
-    // Verify that Clinics brand and login screen text render.
-    expect(find.text('Clinics'), findsWidgets);
     expect(find.text('Acesse sua conta'), findsOneWidget);
+    expect(find.byType(TextField), findsNWidgets(2));
   });
 }
