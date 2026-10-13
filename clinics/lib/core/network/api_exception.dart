@@ -47,7 +47,10 @@ class ApiException implements Exception {
         fieldErrors: errors,
       );
     }
+    // Estourou o limite total da requisição (ex.: DNS preso): trata como falha de rede.
+    final timedOut = e.type == DioExceptionType.cancel && e.error == 'deadline';
     final offline =
+        timedOut ||
         e.type == DioExceptionType.connectionError ||
         e.type == DioExceptionType.connectionTimeout ||
         e.type == DioExceptionType.receiveTimeout ||
