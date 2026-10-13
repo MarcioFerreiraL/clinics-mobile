@@ -1,8 +1,9 @@
 import 'package:clinics/core/utils/input_masks.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-String _type(MaskFormatter f, String text) =>
-    f.formatEditUpdate(TextEditingValue.empty, TextEditingValue(text: text)).text;
+String _type(MaskFormatter f, String text) => f
+    .formatEditUpdate(TextEditingValue.empty, TextEditingValue(text: text))
+    .text;
 
 void main() {
   test('telefone é formatado enquanto digita', () {

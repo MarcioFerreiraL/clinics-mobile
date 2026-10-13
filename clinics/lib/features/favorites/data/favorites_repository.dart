@@ -9,6 +9,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/device/notification_service.dart';
 import '../../../core/network/api_exception.dart';
 import '../../search/domain/money.dart';
+import '../../settings/data/preferences.dart';
 import '../../auth/presentation/providers/auth_provider.dart';
 import '../domain/favorite_exam.dart';
 
@@ -73,7 +74,9 @@ class FavoritesNotifier extends AsyncNotifier<List<FavoriteExam>> {
           .cast<String, num>();
       for (final f in items) {
         final previous = known[f.examTypeId];
-        if (previous != null && f.minPrice < previous) {
+        if (ref.read(priceAlertsProvider) &&
+            previous != null &&
+            f.minPrice < previous) {
           await ref
               .read(notificationServiceProvider)
               .showPriceDrop(

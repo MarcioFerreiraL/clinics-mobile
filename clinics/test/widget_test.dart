@@ -4,6 +4,8 @@ import 'package:clinics/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:clinics/features/settings/data/preferences.dart';
 
 class _GuestAuth extends AuthNotifier {
   @override
@@ -12,9 +14,14 @@ class _GuestAuth extends AuthNotifier {
 
 void main() {
   testWidgets('visitante cai na tela de login', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [authProvider.overrideWith(_GuestAuth.new)],
+        overrides: [
+          authProvider.overrideWith(_GuestAuth.new),
+          sharedPreferencesProvider.overrideWithValue(prefs),
+        ],
         child: const ClinicsApp(),
       ),
     );
