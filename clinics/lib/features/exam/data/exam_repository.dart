@@ -12,9 +12,12 @@ class ExamRepository {
 
   Future<ExamDetail> getExam(String id, {double? lat, double? lng}) async {
     try {
-      final res = await _dio.get('/exams/$id', queryParameters: {
-        if (lat != null && lng != null) ...{'lat': lat, 'lng': lng},
-      });
+      final res = await _dio.get(
+        '/exams/$id',
+        queryParameters: {
+          if (lat != null && lng != null) ...{'lat': lat, 'lng': lng},
+        },
+      );
       return ExamDetail.fromJson(res.data as Map<String, dynamic>);
     } on DioException catch (e) {
       throw ApiException.fromDio(e);
@@ -32,9 +35,11 @@ class ExamRepository {
   }
 }
 
-final examRepositoryProvider =
-    Provider((ref) => ExamRepository(ref.watch(dioProvider)));
-
-final examDetailProvider = FutureProvider.autoDispose.family<ExamDetail, String>(
-  (ref, id) => ref.watch(examRepositoryProvider).getExam(id),
+final examRepositoryProvider = Provider(
+  (ref) => ExamRepository(ref.watch(dioProvider)),
 );
+
+final examDetailProvider = FutureProvider.autoDispose
+    .family<ExamDetail, String>(
+      (ref, id) => ref.watch(examRepositoryProvider).getExam(id),
+    );

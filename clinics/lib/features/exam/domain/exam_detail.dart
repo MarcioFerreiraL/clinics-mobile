@@ -29,18 +29,18 @@ class ExamClinic {
   });
 
   factory ExamClinic.fromJson(Map<String, dynamic> json) => ExamClinic(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        address: json['address'] as String?,
-        neighborhood: json['neighborhood'] as String?,
-        phoneNumber: json['phone_number'] as String?,
-        whatsappNumber: json['whatsapp_number'] as String?,
-        rating: (json['rating'] as num?)?.toDouble() ?? 0,
-        reviewCount: json['review_count'] as int? ?? 0,
-        isVerified: json['is_verified'] as bool? ?? false,
-        openNow: json['open_now'] as bool? ?? false,
-        operatingHours: OperatingHours.listFromJson(json['operating_hours']),
-      );
+    id: json['id'] as String,
+    name: json['name'] as String,
+    address: json['address'] as String?,
+    neighborhood: json['neighborhood'] as String?,
+    phoneNumber: json['phone_number'] as String?,
+    whatsappNumber: json['whatsapp_number'] as String?,
+    rating: (json['rating'] as num?)?.toDouble() ?? 0,
+    reviewCount: json['review_count'] as int? ?? 0,
+    isVerified: json['is_verified'] as bool? ?? false,
+    openNow: json['open_now'] as bool? ?? false,
+    operatingHours: OperatingHours.listFromJson(json['operating_hours']),
+  );
 }
 
 class ExamDetail {
@@ -67,26 +67,29 @@ class ExamDetail {
   });
 
   factory ExamDetail.fromJson(Map<String, dynamic> json) => ExamDetail(
-        id: json['id'] as String,
-        examType: ExamTypeRef.fromJson(json['exam_type'] as Map<String, dynamic>),
-        price: (json['price'] as num).toDouble(),
-        averagePrice: (json['average_price'] as num?)?.toDouble() ?? 0,
-        savings: (json['savings'] as num?)?.toDouble() ?? 0,
-        bestPrice: json['best_price'] as bool? ?? false,
-        preparation: json['preparation'] as String?,
-        paymentMethods: json['payment_methods'] as String?,
-        clinic: ExamClinic.fromJson(json['clinic'] as Map<String, dynamic>),
-      );
+    id: json['id'] as String,
+    examType: ExamTypeRef.fromJson(json['exam_type'] as Map<String, dynamic>),
+    price: (json['price'] as num).toDouble(),
+    averagePrice: (json['average_price'] as num?)?.toDouble() ?? 0,
+    savings: (json['savings'] as num?)?.toDouble() ?? 0,
+    bestPrice: json['best_price'] as bool? ?? false,
+    preparation: json['preparation'] as String?,
+    paymentMethods: json['payment_methods'] as String?,
+    clinic: ExamClinic.fromJson(json['clinic'] as Map<String, dynamic>),
+  );
 }
 
 class ContactResult {
   final String whatsappUrl;
   final double estimatedSavings;
 
-  const ContactResult({required this.whatsappUrl, required this.estimatedSavings});
+  const ContactResult({
+    required this.whatsappUrl,
+    required this.estimatedSavings,
+  });
 
   factory ContactResult.fromJson(Map<String, dynamic> json) => ContactResult(
-        whatsappUrl: json['whatsapp_url'] as String,
-        estimatedSavings: (json['estimated_savings'] as num?)?.toDouble() ?? 0,
-      );
+    whatsappUrl: json['whatsapp_url'] as String,
+    estimatedSavings: (json['estimated_savings'] as num?)?.toDouble() ?? 0,
+  );
 }
