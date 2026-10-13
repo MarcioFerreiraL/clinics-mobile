@@ -314,265 +314,273 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                       final exam = exams[index];
                       final clinic = exam.clinic;
 
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: AppColors.borderOutline),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.02),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Clinic Header
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  child: InkWell(
-                                    onTap: () {
-                                      context.push('/clinic/${clinic.id}');
-                                    },
+                      return GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => context.push('/exam/${exam.id}'),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: AppColors.borderOutline),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Clinic Header
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: InkWell(
+                                      onTap: () {
+                                        context.push('/clinic/${clinic.id}');
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              clinic.name,
+                                              style: theme.textTheme.titleMedium
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 15,
+                                                  ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          if (clinic.isVerified)
+                                            const Icon(
+                                              Icons.verified,
+                                              size: 16,
+                                              color: AppColors.primaryLight,
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                      vertical: 3,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.warningBg,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
                                     child: Row(
                                       children: [
-                                        Flexible(
-                                          child: Text(
-                                            clinic.name,
-                                            style: theme.textTheme.titleMedium
-                                                ?.copyWith(
-                                                  fontWeight: FontWeight.w700,
-                                                  fontSize: 15,
-                                                ),
-                                          ),
+                                        const Icon(
+                                          Icons.star,
+                                          size: 14,
+                                          color: Colors.amber,
                                         ),
-                                        const SizedBox(width: 4),
-                                        if (clinic.isVerified)
-                                          const Icon(
-                                            Icons.verified,
-                                            size: 16,
-                                            color: AppColors.primaryLight,
-                                          ),
+                                        const SizedBox(width: 3),
+                                        Text(
+                                          clinic.rating.toStringAsFixed(1),
+                                          style: theme.textTheme.labelSmall
+                                              ?.copyWith(
+                                                color: AppColors.warningText,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
                                       ],
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 3,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.warningBg,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        size: 14,
-                                        color: Colors.amber,
-                                      ),
-                                      const SizedBox(width: 3),
-                                      Text(
-                                        clinic.rating.toStringAsFixed(1),
-                                        style: theme.textTheme.labelSmall
-                                            ?.copyWith(
-                                              color: AppColors.warningText,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              [
-                                if (clinic.neighborhood != null)
-                                  clinic.neighborhood!,
-                                'Surubim - PE',
-                                if (exam.distanceKm != null)
-                                  '${exam.distanceKm!.toStringAsFixed(1).replaceAll('.', ',')} km',
-                              ].join(' • '),
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontSize: 11,
+                                ],
                               ),
-                            ),
+                              const SizedBox(height: 4),
+                              Text(
+                                [
+                                  if (clinic.neighborhood != null)
+                                    clinic.neighborhood!,
+                                  'Surubim - PE',
+                                  if (exam.distanceKm != null)
+                                    '${exam.distanceKm!.toStringAsFixed(1).replaceAll('.', ',')} km',
+                                ].join(' • '),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontSize: 11,
+                                ),
+                              ),
 
-                            const Divider(
-                              height: 20,
-                              color: AppColors.borderOutline,
-                            ),
+                              const Divider(
+                                height: 20,
+                                color: AppColors.borderOutline,
+                              ),
 
-                            // Exam Details & Price Row
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        exam.examType.name,
-                                        style: theme.textTheme.titleMedium
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 16,
-                                              color: AppColors.slateDeep,
-                                            ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 2,
+                              // Exam Details & Price Row
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          exam.examType.name,
+                                          style: theme.textTheme.titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16,
+                                                color: AppColors.slateDeep,
+                                              ),
                                         ),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.atmosphericBlue,
-                                          borderRadius: BorderRadius.circular(
-                                            6,
+                                        const SizedBox(height: 4),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 8,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.atmosphericBlue,
+                                            borderRadius: BorderRadius.circular(
+                                              6,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            exam.examType.category,
+                                            style: theme.textTheme.labelSmall
+                                                ?.copyWith(
+                                                  color: AppColors.primary,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                           ),
                                         ),
-                                        child: Text(
-                                          exam.examType.category,
-                                          style: theme.textTheme.labelSmall
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          exam.preparation ?? '',
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: theme.textTheme.bodySmall
                                               ?.copyWith(
-                                                color: AppColors.primary,
-                                                fontWeight: FontWeight.bold,
+                                                fontSize: 11,
+                                                color: AppColors.slateSecondary,
                                               ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        exam.preparation ?? '',
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                              fontSize: 11,
-                                              color: AppColors.slateSecondary,
-                                            ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                // Price Container
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.atmosphericBlueLight,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: AppColors.atmosphericBlue,
+                                      ],
                                     ),
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        formatPrice(exam.price),
-                                        style: theme.textTheme.headlineSmall
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w800,
-                                              color: AppColors.primary,
-                                            ),
+                                  const SizedBox(width: 12),
+                                  // Price Container
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 10,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.atmosphericBlueLight,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                        color: AppColors.atmosphericBlue,
                                       ),
-                                      if (exam.bestPrice)
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
                                         Text(
-                                          'Melhor preço',
-                                          style: theme.textTheme.labelSmall
+                                          formatPrice(exam.price),
+                                          style: theme.textTheme.headlineSmall
                                               ?.copyWith(
-                                                color: AppColors.whatsApp,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                        )
-                                      else if (exam.savings > 0)
-                                        Text(
-                                          'Economize ${formatPrice(exam.savings)}',
-                                          style: theme.textTheme.labelSmall
-                                              ?.copyWith(
-                                                color: AppColors.whatsApp,
-                                                fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.w800,
+                                                color: AppColors.primary,
                                               ),
                                         ),
-                                      Text(
-                                        exam.paymentMethods ?? '',
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                      ),
-                                    ],
+                                        if (exam.bestPrice)
+                                          Text(
+                                            'Melhor preço',
+                                            style: theme.textTheme.labelSmall
+                                                ?.copyWith(
+                                                  color: AppColors.whatsApp,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          )
+                                        else if (exam.savings > 0)
+                                          Text(
+                                            'Economize ${formatPrice(exam.savings)}',
+                                            style: theme.textTheme.labelSmall
+                                                ?.copyWith(
+                                                  color: AppColors.whatsApp,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                        Text(
+                                          exam.paymentMethods ?? '',
+                                          style: theme.textTheme.bodySmall
+                                              ?.copyWith(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                ],
+                              ),
 
-                            const SizedBox(height: 14),
+                              const SizedBox(height: 14),
 
-                            // Actions
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton(
-                                    style: OutlinedButton.styleFrom(
+                              // Actions
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      style: OutlinedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: 10,
+                                        ),
+                                      ),
+                                      onPressed: () =>
+                                          context.push('/exam/${exam.id}'),
+                                      child: const Text(
+                                        'Ver Preparo e Detalhes',
+                                        style: TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.whatsApp,
+                                      foregroundColor: Colors.white,
+                                      minimumSize: const Size(120, 42),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
                                         vertical: 10,
                                       ),
                                     ),
+                                    icon: const Icon(Icons.chat, size: 16),
+                                    label: const Text(
+                                      'WhatsApp',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     onPressed: () =>
-                                        context.push('/exam/${exam.id}'),
-                                    child: const Text(
-                                      'Ver Preparo e Detalhes',
-                                      style: TextStyle(fontSize: 12),
-                                    ),
+                                        openExamWhatsApp(context, ref, exam.id),
                                   ),
-                                ),
-                                const SizedBox(width: 10),
-                                ElevatedButton.icon(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.whatsApp,
-                                    foregroundColor: Colors.white,
-                                    minimumSize: const Size(120, 42),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 14,
-                                      vertical: 10,
-                                    ),
-                                  ),
-                                  icon: const Icon(Icons.chat, size: 16),
-                                  label: const Text(
-                                    'WhatsApp',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  onPressed: () =>
-                                      openExamWhatsApp(context, ref, exam.id),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

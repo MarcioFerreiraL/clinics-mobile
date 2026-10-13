@@ -1,5 +1,4 @@
 import 'package:clinics/core/utils/input_masks.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 String _type(MaskFormatter f, String text) =>
