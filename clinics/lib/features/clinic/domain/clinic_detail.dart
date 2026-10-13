@@ -19,13 +19,13 @@ class ClinicExam {
   });
 
   factory ClinicExam.fromJson(Map<String, dynamic> json) => ClinicExam(
-        id: json['id'] as String,
-        examType: ExamTypeRef.fromJson(json['exam_type'] as Map<String, dynamic>),
-        price: (json['price'] as num).toDouble(),
-        bestPrice: json['best_price'] as bool? ?? false,
-        preparation: json['preparation'] as String?,
-        paymentMethods: json['payment_methods'] as String?,
-      );
+    id: json['id'] as String,
+    examType: ExamTypeRef.fromJson(json['exam_type'] as Map<String, dynamic>),
+    price: (json['price'] as num).toDouble(),
+    bestPrice: json['best_price'] as bool? ?? false,
+    preparation: json['preparation'] as String?,
+    paymentMethods: json['payment_methods'] as String?,
+  );
 }
 
 class ClinicDetail {
@@ -39,6 +39,8 @@ class ClinicDetail {
   final String? phoneNumber;
   final String? whatsappNumber;
   final String? logoUrl;
+  final double? latitude;
+  final double? longitude;
   final double rating;
   final int reviewCount;
   final int patientCount;
@@ -58,6 +60,8 @@ class ClinicDetail {
     this.phoneNumber,
     this.whatsappNumber,
     this.logoUrl,
+    this.latitude,
+    this.longitude,
     required this.rating,
     required this.reviewCount,
     required this.patientCount,
@@ -68,26 +72,28 @@ class ClinicDetail {
   });
 
   factory ClinicDetail.fromJson(Map<String, dynamic> json) => ClinicDetail(
-        id: json['id'] as String,
-        name: json['name'] as String,
-        description: json['description'] as String?,
-        address: json['address'] as String?,
-        neighborhood: json['neighborhood'] as String?,
-        city: json['city'] as String? ?? 'Surubim',
-        state: json['state'] as String? ?? 'PE',
-        phoneNumber: json['phone_number'] as String?,
-        whatsappNumber: json['whatsapp_number'] as String?,
-        logoUrl: json['logo_url'] as String?,
-        rating: (json['rating'] as num?)?.toDouble() ?? 0,
-        reviewCount: json['review_count'] as int? ?? 0,
-        patientCount: json['patient_count'] as int? ?? 0,
-        isVerified: json['is_verified'] as bool? ?? false,
-        openNow: json['open_now'] as bool? ?? false,
-        operatingHours: OperatingHours.listFromJson(json['operating_hours']),
-        exams: (json['exams'] as List? ?? [])
-            .map((e) => ClinicExam.fromJson(e as Map<String, dynamic>))
-            .toList(),
-      );
+    id: json['id'] as String,
+    name: json['name'] as String,
+    description: json['description'] as String?,
+    address: json['address'] as String?,
+    neighborhood: json['neighborhood'] as String?,
+    city: json['city'] as String? ?? 'Surubim',
+    state: json['state'] as String? ?? 'PE',
+    phoneNumber: json['phone_number'] as String?,
+    whatsappNumber: json['whatsapp_number'] as String?,
+    logoUrl: json['logo_url'] as String?,
+    latitude: (json['latitude'] as num?)?.toDouble(),
+    longitude: (json['longitude'] as num?)?.toDouble(),
+    rating: (json['rating'] as num?)?.toDouble() ?? 0,
+    reviewCount: json['review_count'] as int? ?? 0,
+    patientCount: json['patient_count'] as int? ?? 0,
+    isVerified: json['is_verified'] as bool? ?? false,
+    openNow: json['open_now'] as bool? ?? false,
+    operatingHours: OperatingHours.listFromJson(json['operating_hours']),
+    exams: (json['exams'] as List? ?? [])
+        .map((e) => ClinicExam.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
 }
 
 class Review {
@@ -106,10 +112,10 @@ class Review {
   });
 
   factory Review.fromJson(Map<String, dynamic> json) => Review(
-        id: json['id'] as String,
-        rating: json['rating'] as int,
-        comment: json['comment'] as String?,
-        authorName: json['author_name'] as String?,
-        createdAt: DateTime.parse(json['created_at'] as String),
-      );
+    id: json['id'] as String,
+    rating: json['rating'] as int,
+    comment: json['comment'] as String?,
+    authorName: json['author_name'] as String?,
+    createdAt: DateTime.parse(json['created_at'] as String),
+  );
 }
