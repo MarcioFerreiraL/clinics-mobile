@@ -8,6 +8,8 @@ class ExamClinic {
   final String? neighborhood;
   final String? phoneNumber;
   final String? whatsappNumber;
+  final double? latitude;
+  final double? longitude;
   final double rating;
   final int reviewCount;
   final bool isVerified;
@@ -21,6 +23,8 @@ class ExamClinic {
     this.neighborhood,
     this.phoneNumber,
     this.whatsappNumber,
+    this.latitude,
+    this.longitude,
     required this.rating,
     required this.reviewCount,
     required this.isVerified,
@@ -35,6 +39,8 @@ class ExamClinic {
     neighborhood: json['neighborhood'] as String?,
     phoneNumber: json['phone_number'] as String?,
     whatsappNumber: json['whatsapp_number'] as String?,
+    latitude: (json['latitude'] as num?)?.toDouble(),
+    longitude: (json['longitude'] as num?)?.toDouble(),
     rating: (json['rating'] as num?)?.toDouble() ?? 0,
     reviewCount: json['review_count'] as int? ?? 0,
     isVerified: json['is_verified'] as bool? ?? false,
