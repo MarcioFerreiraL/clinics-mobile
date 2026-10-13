@@ -118,9 +118,9 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/branding/app_icon_foreground.png"
 
 flutter_native_splash:
+  # Tela nativa só branca: a animação do logo (Flutter) é a primeira coisa que aparece.
   color: "#FFFFFF"
-  image: "assets/branding/logo_mark.png"
   android_12:
     color: "#FFFFFF"
-    image: "assets/branding/app_icon_foreground.png"
-    icon_background_color: "#E3F2FB"
+    image: "assets/branding/splash_empty.png"
+    icon_background_color: "#FFFFFF"
