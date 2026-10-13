@@ -8,6 +8,7 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../clinic/domain/operating_hours.dart';
 import '../../../favorites/data/favorites_repository.dart';
 import '../../../search/domain/money.dart';
+import '../../../../core/device/notification_service.dart';
 import '../../data/exam_repository.dart';
 import '../../domain/exam_detail.dart';
 import '../open_exam_whatsapp.dart';
@@ -41,6 +42,51 @@ class _ExamBody extends ConsumerWidget {
   final ExamDetail exam;
 
   const _ExamBody({required this.exam});
+
+  Future<void> _scheduleReminder(BuildContext context, WidgetRef ref) async {
+    final now = DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: now.add(const Duration(days: 1)),
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 365)),
+      helpText: 'Dia do lembrete',
+    );
+    if (date == null || !context.mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: const TimeOfDay(hour: 20, minute: 0),
+      helpText: 'Horário do lembrete',
+    );
+    if (time == null) return;
+    final when = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
+    if (!when.isAfter(DateTime.now())) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Escolha um horário no futuro.')),
+        );
+      }
+      return;
+    }
+    await ref
+        .read(notificationServiceProvider)
+        .scheduleReminder(
+          id: exam.id.hashCode & 0x7fffffff,
+          examName: exam.examType.name,
+          preparation: exam.preparation ?? 'Confira as orientações do exame.',
+          when: when,
+        );
+    if (context.mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Lembrete agendado.')));
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -280,6 +326,15 @@ class _ExamBody extends ConsumerWidget {
                     icon: Icons.badge_outlined,
                     title: 'Documentos Necessários',
                     detail: 'Documento com foto (RG ou CNH), CPF e Cartão SUS ou do Convênio.',
+                  ),
+                  const SizedBox(height: 14),
+                  OutlinedButton.icon(
+                    icon: const Icon(
+                      Icons.notifications_active_outlined,
+                      size: 18,
+                    ),
+                    label: const Text('Lembrar do preparo'),
+                    onPressed: () => _scheduleReminder(context, ref),
                   ),
                 ],
               ),

@@ -5,6 +5,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../profile/presentation/widgets/app_drawer.dart';
+import '../../../favorites/data/favorites_repository.dart';
 import '../../data/search_repository.dart';
 import '../../domain/exam_offer.dart';
 import '../../domain/money.dart';
@@ -91,6 +92,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    // Carrega os favoritos para disparar os alertas de queda de preço.
+    ref.watch(favoritesProvider);
 
     return Scaffold(
       key: _scaffoldKey,
