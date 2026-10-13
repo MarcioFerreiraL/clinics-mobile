@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/network/api_config.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends ConsumerWidget {
   const AppDrawer({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final user = ref.watch(authProvider).value;
+    final avatar = ApiConfig.fileUrl(user?.avatarUrl);
 
     return Drawer(
       backgroundColor: AppColors.surfaceWhite,
@@ -32,11 +37,10 @@ class AppDrawer extends StatelessWidget {
                       CircleAvatar(
                         radius: 28,
                         backgroundColor: AppColors.atmosphericBlue,
-                        child: const Icon(
-                          Icons.person,
-                          size: 32,
-                          color: AppColors.primary,
-                        ),
+                        backgroundImage: avatar == null ? null : NetworkImage(avatar),
+                        child: avatar == null
+                            ? const Icon(Icons.person, size: 32, color: AppColors.primary)
+                            : null,
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -44,14 +48,14 @@ class AppDrawer extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Maria Silva',
+                              user?.fullName ?? 'Visitante',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              '(81) 99876-5432',
+                              user?.phone ?? 'Entre para favoritar e avaliar',
                               style: theme.textTheme.bodySmall,
                             ),
                             const SizedBox(height: 6),
@@ -65,7 +69,7 @@ class AppDrawer extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                'Paciente',
+                                user == null ? 'Visitante' : 'Paciente',
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w600,
@@ -136,11 +140,11 @@ class AppDrawer extends StatelessWidget {
                   ),
                   _buildDrawerItem(
                     context: context,
-                    icon: Icons.local_hospital_outlined,
-                    title: 'Clínicas Parceiras',
+                    icon: Icons.favorite_border,
+                    title: 'Exames Favoritos',
                     onTap: () {
                       Navigator.pop(context);
-                      context.push('/clinic/clinic-1');
+                      context.push('/favorites');
                     },
                   ),
                   _buildDrawerItem(
@@ -156,22 +160,6 @@ class AppDrawer extends StatelessWidget {
                     color: AppColors.borderOutline,
                     indent: 16,
                     endIndent: 16,
-                  ),
-                  _buildDrawerItem(
-                    context: context,
-                    icon: Icons.dashboard_customize_outlined,
-                    title: 'Painel da Clínica (Gestão)',
-                    subtitle: 'Acesso do gestor da clínica',
-                    onTap: () {
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Acesso ao Painel da Clínica (Gestor).',
-                          ),
-                        ),
-                      );
-                    },
                   ),
                   _buildDrawerItem(
                     context: context,
@@ -202,16 +190,20 @@ class AppDrawer extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     tileColor: AppColors.surfaceMuted,
-                    leading: const Icon(Icons.logout, color: AppColors.error),
+                    leading: Icon(
+                      user == null ? Icons.login : Icons.logout,
+                      color: user == null ? AppColors.primary : AppColors.error,
+                    ),
                     title: Text(
-                      'Sair da Conta',
+                      user == null ? 'Entrar' : 'Sair da Conta',
                       style: theme.textTheme.labelLarge?.copyWith(
-                        color: AppColors.error,
+                        color: user == null ? AppColors.primary : AppColors.error,
                       ),
                     ),
-                    onTap: () {
+                    onTap: () async {
                       Navigator.pop(context);
-                      context.go('/login');
+                      await ref.read(authProvider.notifier).logout();
+                      if (context.mounted) context.go('/login');
                     },
                   ),
                   const SizedBox(height: 12),

@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_view.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../clinic/domain/operating_hours.dart';
+import '../../../favorites/data/favorites_repository.dart';
 import '../../../search/domain/money.dart';
 import '../../data/exam_repository.dart';
 import '../../domain/exam_detail.dart';
@@ -47,7 +49,37 @@ class _ExamBody extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.surfaceCanvas,
-      appBar: AppBar(title: const Text('Detalhes do Exame')),
+      appBar: AppBar(
+        title: const Text('Detalhes do Exame'),
+        actions: [
+          Builder(
+            builder: (context) {
+              final isFavorite =
+                  ref
+                      .watch(favoritesProvider)
+                      .value
+                      ?.any((f) => f.examTypeId == exam.examType.id) ??
+                  false;
+              return IconButton(
+                tooltip: isFavorite ? 'Remover dos favoritos' : 'Favoritar',
+                icon: Icon(
+                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                  color: isFavorite ? Colors.redAccent : null,
+                ),
+                onPressed: () async {
+                  if (ref.read(authProvider).value == null) {
+                    context.push('/login');
+                    return;
+                  }
+                  await ref
+                      .read(favoritesProvider.notifier)
+                      .toggle(exam.examType.id);
+                },
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
         child: Column(
