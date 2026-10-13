@@ -1,9 +1,10 @@
-/// URL base da API. Em emulador Android use `http://10.0.2.2:8080`;
-/// em aparelho físico, o IP da máquina na rede local.
+/// URL base da API. O padrão é a produção (Cloudflare Tunnel, HTTPS).
+/// Para desenvolvimento, sobrescreva com `--dart-define=API_BASE_URL=...`:
+/// emulador Android `http://10.0.2.2:8080`; aparelho físico, o IP da máquina na rede local.
 class ApiConfig {
   static const String host = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8080',
+    defaultValue: 'https://clinics.marciodev.com',
   );
 
   static const String baseUrl = '$host/api/v1';
