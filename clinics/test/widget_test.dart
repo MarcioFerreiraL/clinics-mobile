@@ -25,6 +25,7 @@ void main() {
         child: const ClinicsApp(),
       ),
     );
+    await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
 
     expect(find.text('Acesse sua conta'), findsOneWidget);

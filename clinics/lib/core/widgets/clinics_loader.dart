@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
-import 'app_logo.dart';
+import 'animated_logo.dart';
 
-/// Carregamento da marca: o logo "respira" dentro de um círculo verde-menta que pulsa.
-/// Animação 2D simples, sem degradês.
+/// Carregamento da marca: o pino pula e a sombra no chão acompanha. Animação 2D simples.
 class ClinicsLoader extends StatefulWidget {
   final double size;
   final String? message;
@@ -19,8 +18,8 @@ class _ClinicsLoaderState extends State<ClinicsLoader>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1400),
-  )..repeat();
+    duration: const Duration(milliseconds: 900),
+  )..repeat(reverse: true);
 
   @override
   void dispose() {
@@ -33,35 +32,16 @@ class _ClinicsLoaderState extends State<ClinicsLoader>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SizedBox(
-          width: widget.size * 1.6,
-          height: widget.size * 1.6,
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, _) {
-              final t = _controller.value;
-              // Anel que cresce e some; logo com leve pulsar.
-              final ring = Curves.easeOut.transform(t);
-              final pulse = 1 + 0.06 * (1 - (2 * t - 1).abs());
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: widget.size * (1 + 0.6 * ring),
-                    height: widget.size * (1 + 0.6 * ring),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.mintSoft.withValues(alpha: 1 - ring),
-                    ),
-                  ),
-                  Transform.scale(
-                    scale: pulse,
-                    child: AppLogo(size: widget.size),
-                  ),
-                ],
-              );
-            },
-          ),
+        AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            // Sobe desacelerando e desce acelerando, como um pulinho.
+            final lift = Curves.easeOutQuad.transform(_controller.value);
+            return CustomPaint(
+              size: Size.square(widget.size),
+              painter: LogoPainter(bob: -lift * 70, shadow: 1),
+            );
+          },
         ),
         if (widget.message != null) ...[
           const SizedBox(height: 8),
