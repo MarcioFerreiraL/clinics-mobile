@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/widgets/network_activity_overlay.dart';
 import 'features/settings/data/preferences.dart';
 
 Future<void> main() async {
@@ -35,6 +36,8 @@ class ClinicsApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      builder: (context, child) =>
+          NetworkActivityOverlay(child: child ?? const SizedBox.shrink()),
       routerConfig: ref.watch(appRouterProvider),
     );
   }
