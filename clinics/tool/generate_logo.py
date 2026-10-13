@@ -96,8 +96,8 @@ if __name__ == "__main__":
 
     bg = Image.new("RGBA", (SIZE, SIZE), (227, 242, 251, 255))
     icon = bg.copy()
-    icon.alpha_composite(place(m, 0.96))
+    icon.alpha_composite(place(m, 1.18))
     down(icon, 1024).convert("RGB").save("assets/branding/app_icon.png")
 
-    down(place(m, 0.62), 1024).save("assets/branding/app_icon_foreground.png")
+    down(place(m, 0.90), 1024).save("assets/branding/app_icon_foreground.png")
     print("ok")

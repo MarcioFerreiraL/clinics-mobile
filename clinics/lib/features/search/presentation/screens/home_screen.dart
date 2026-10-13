@@ -111,7 +111,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         title: Row(
           children: [
-            AppLogo(size: 28),
+            AppLogo(size: 42),
             const SizedBox(width: 8),
             Text(
               'Clinics',

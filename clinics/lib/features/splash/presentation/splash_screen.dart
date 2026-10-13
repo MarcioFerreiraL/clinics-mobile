@@ -87,7 +87,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(flex: 5),
-              AnimatedLogo(animation: _controller, size: 170),
+              AnimatedLogo(animation: _controller, size: 220),
               const SizedBox(height: 12),
               _reveal(
                 0.62,

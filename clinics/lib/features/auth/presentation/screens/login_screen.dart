@@ -124,7 +124,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         elevation: 0,
         title: Row(
           children: [
-            AppLogo(size: 28),
+            AppLogo(size: 42),
             const SizedBox(width: 8),
             Text(
               'Clinics',
@@ -169,7 +169,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 12),
-              Center(child: AppLogo(size: 54)),
+              Center(child: AppLogo(size: 104)),
               const SizedBox(height: 16),
               Text(
                 isLoginTab ? 'Acesse sua conta' : 'Crie sua conta',
