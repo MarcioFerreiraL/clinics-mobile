@@ -37,9 +37,15 @@ class AppDrawer extends ConsumerWidget {
                       CircleAvatar(
                         radius: 28,
                         backgroundColor: AppColors.atmosphericBlue,
-                        backgroundImage: avatar == null ? null : NetworkImage(avatar),
+                        backgroundImage: avatar == null
+                            ? null
+                            : NetworkImage(avatar),
                         child: avatar == null
-                            ? const Icon(Icons.person, size: 32, color: AppColors.primary)
+                            ? const Icon(
+                                Icons.person,
+                                size: 32,
+                                color: AppColors.primary,
+                              )
                             : null,
                       ),
                       const SizedBox(width: 14),
@@ -197,7 +203,9 @@ class AppDrawer extends ConsumerWidget {
                     title: Text(
                       user == null ? 'Entrar' : 'Sair da Conta',
                       style: theme.textTheme.labelLarge?.copyWith(
-                        color: user == null ? AppColors.primary : AppColors.error,
+                        color: user == null
+                            ? AppColors.primary
+                            : AppColors.error,
                       ),
                     ),
                     onTap: () async {

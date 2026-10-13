@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/device/location_service.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../exam/presentation/open_exam_whatsapp.dart';
@@ -41,6 +42,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   late String _query;
   String _sortBy = 'price'; // price, rating, name
   Timer? _debounce;
+  ({double lat, double lng})? _position;
 
   @override
   void initState() {
@@ -48,6 +50,27 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
     _searchController = TextEditingController(text: widget.initialQuery);
     _selectedCategory = widget.initialCategory;
     _query = widget.initialQuery;
+  }
+
+  Future<void> _onSortChanged(String value) async {
+    if (value != 'distance') {
+      setState(() => _sortBy = value);
+      return;
+    }
+    try {
+      final position = await LocationService().currentPosition();
+      if (mounted) {
+        setState(() {
+          _position = position;
+          _sortBy = value;
+        });
+      }
+    } on LocationException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
   }
 
   void _onQueryChanged(String value) {
@@ -73,6 +96,8 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           query: _query,
           category: _selectedCategory,
           sortBy: _sortBy,
+          lat: _sortBy == 'distance' ? _position?.lat : null,
+          lng: _sortBy == 'distance' ? _position?.lng : null,
         ),
       ),
     );
@@ -189,6 +214,16 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                         ),
                       ),
                       DropdownMenuItem(
+                        value: 'distance',
+                        child: Text(
+                          'Mais Próximo',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
                         value: 'rating',
                         child: Text(
                           'Melhor Avaliação',
@@ -210,9 +245,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                       ),
                     ],
                     onChanged: (val) {
-                      if (val != null) {
-                        setState(() => _sortBy = val);
-                      }
+                      if (val != null) _onSortChanged(val);
                     },
                   ),
                 ),

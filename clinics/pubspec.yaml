@@ -42,6 +42,12 @@ dependencies:
   flutter_secure_storage: ^11.2.0
   image_picker: ^1.2.4
   http_parser: ^4.1.2
+  geolocator: ^14.1.1
+  speech_to_text: ^7.5.0
+  flutter_local_notifications: ^22.3.2
+  shared_preferences: ^2.5.6
+  timezone: ^0.11.2
+  flutter_timezone: ^5.1.1
 
 dev_dependencies:
   flutter_test:
