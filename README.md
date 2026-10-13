@@ -9,6 +9,8 @@ Aplicativo móvel para comparação de preços de exames médicos e consultas em
 - Márcio Ferreira Lima
 - Lucas Nascimento Barros
 
+> Projeto desenvolvido por **MárcioDev e Lucas**. Identidade visual em [`docs/IDENTIDADE_VISUAL.md`](docs/IDENTIDADE_VISUAL.md).
+
 ---
 
 ## Prototipação
