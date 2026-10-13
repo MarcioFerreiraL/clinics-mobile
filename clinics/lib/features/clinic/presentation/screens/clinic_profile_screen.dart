@@ -407,7 +407,7 @@ class _ClinicBodyState extends ConsumerState<_ClinicBody>
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
-                                        'Detalhes',
+                                        'Ver mais',
                                         style: theme.textTheme.labelSmall
                                             ?.copyWith(
                                               color: AppColors.primary,

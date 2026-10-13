@@ -8,13 +8,14 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
-import '../../../clinic/domain/operating_hours.dart';
 import '../../../favorites/data/favorites_repository.dart';
 import '../../../search/domain/money.dart';
 import '../../../../core/device/notification_service.dart';
 import '../../data/exam_repository.dart';
 import '../../domain/exam_detail.dart';
+import '../exam_art.dart';
 import '../open_exam_whatsapp.dart';
+import '../widgets/clinic_location_card.dart';
 
 class ExamDetailScreen extends ConsumerWidget {
   final String examId;
@@ -274,17 +275,13 @@ class _ExamBody extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.borderOutline),
-                    ),
-                    child: const Icon(
-                      Icons.price_check,
-                      size: 36,
-                      color: AppColors.primary,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      examArtAsset(exam.examType.category),
+                      width: 92,
+                      height: 92,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ],
@@ -354,115 +351,7 @@ class _ExamBody extends ConsumerWidget {
             const SizedBox(height: 16),
 
             // Clinic Information Card
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.borderOutline),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Local de Atendimento',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () => context.push('/clinic/${clinic.id}'),
-                        child: const Text('Ver Clínica'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: AppColors.atmosphericBlue,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.local_hospital,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    clinic.name,
-                                    style: theme.textTheme.titleMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                if (clinic.isVerified)
-                                  const Icon(
-                                    Icons.verified,
-                                    size: 16,
-                                    color: AppColors.primaryLight,
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              [
-                                if (clinic.address != null) clinic.address!,
-                                if (clinic.neighborhood != null)
-                                  clinic.neighborhood!,
-                              ].join(' • '),
-                              style: theme.textTheme.bodySmall,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceCanvas,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.access_time,
-                          size: 16,
-                          color: AppColors.slateSecondary,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            '${clinic.openNow ? 'Aberto agora' : 'Fechado agora'} • ${OperatingHours.summarize(clinic.operatingHours)}',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 11,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ClinicLocationCard(clinic: clinic),
           ],
         ),
       ),

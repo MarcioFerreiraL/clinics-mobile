@@ -579,7 +579,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                                       onPressed: () =>
                                           context.push('/exam/${exam.id}'),
                                       child: const Text(
-                                        'Ver Preparo e Detalhes',
+                                        'Ver mais',
                                         style: TextStyle(fontSize: 12),
                                       ),
                                     ),
