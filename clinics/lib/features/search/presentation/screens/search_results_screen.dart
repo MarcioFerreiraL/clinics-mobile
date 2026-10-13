@@ -8,7 +8,10 @@ import '../../../../core/device/location_service.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../exam/presentation/open_exam_whatsapp.dart';
+import '../../../settings/data/preferences.dart';
 import '../../data/search_repository.dart';
+import '../../domain/search_filters.dart';
+import '../widgets/filters_sheet.dart';
 import '../../domain/exam_offer.dart';
 import '../../domain/money.dart';
 
@@ -40,6 +43,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   late TextEditingController _searchController;
   late String _selectedCategory;
   late String _query;
+  late SearchFilters _filters;
   String _sortBy = 'price'; // price, rating, name
   Timer? _debounce;
   ({double lat, double lng})? _position;
@@ -50,6 +54,9 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
     _searchController = TextEditingController(text: widget.initialQuery);
     _selectedCategory = widget.initialCategory;
     _query = widget.initialQuery;
+    _filters = SearchFilters(
+      neighborhood: ref.read(selectedNeighborhoodProvider),
+    );
   }
 
   Future<void> _onSortChanged(String value) async {
@@ -98,6 +105,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           sortBy: _sortBy,
           lat: _sortBy == 'distance' ? _position?.lat : null,
           lng: _sortBy == 'distance' ? _position?.lng : null,
+          filters: _filters,
         ),
       ),
     );
@@ -187,13 +195,32 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '${results.value?.total ?? 0} opções encontradas',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.slateDeep,
+                Expanded(
+                  child: Text(
+                    '${results.value?.total ?? 0} opções encontradas',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.slateDeep,
+                    ),
                   ),
                 ),
+                OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                  ),
+                  icon: Badge(
+                    isLabelVisible: _filters.activeCount > 0,
+                    label: Text('${_filters.activeCount}'),
+                    child: const Icon(Icons.tune, size: 18),
+                  ),
+                  label: const Text('Filtros', style: TextStyle(fontSize: 12)),
+                  onPressed: () async {
+                    final result = await showFiltersSheet(context, _filters);
+                    if (result != null) setState(() => _filters = result);
+                  },
+                ),
+                const SizedBox(width: 8),
                 DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: _sortBy,

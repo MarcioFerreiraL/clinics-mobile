@@ -10,6 +10,7 @@ import '../../features/search/presentation/screens/search_results_screen.dart';
 import '../../features/exam/presentation/screens/exam_detail_screen.dart';
 import '../../features/clinic/presentation/screens/clinic_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
+import '../../features/settings/presentation/screens/settings_screen.dart';
 
 const _protectedRoutes = ['/profile', '/favorites'];
 
@@ -66,6 +67,10 @@ final _routes = <RouteBase>[
       final clinicId = state.pathParameters['id'] ?? '';
       return ClinicProfileScreen(clinicId: clinicId);
     },
+  ),
+  GoRoute(
+    path: '/settings',
+    builder: (context, state) => const SettingsScreen(),
   ),
   GoRoute(
     path: '/favorites',

@@ -6,7 +6,9 @@ import 'package:speech_to_text/speech_to_text.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../profile/presentation/widgets/app_drawer.dart';
 import '../../../favorites/data/favorites_repository.dart';
+import '../../../settings/data/preferences.dart';
 import '../../data/search_repository.dart';
+import '../widgets/neighborhood_picker.dart';
 import '../../domain/exam_offer.dart';
 import '../../domain/money.dart';
 import 'search_results_screen.dart' show searchCategories;
@@ -153,12 +155,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
           IconButton(
-            icon: const CircleAvatar(
-              radius: 15,
-              backgroundColor: AppColors.atmosphericBlue,
-              child: Icon(Icons.person, size: 18, color: AppColors.primary),
-            ),
-            onPressed: () => context.push('/profile'),
+            tooltip: 'Configurações',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => context.push('/settings'),
           ),
           const SizedBox(width: 8),
         ],
@@ -172,41 +171,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Column(
                 children: [
                   // Location Pill
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.atmosphericBlue,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.near_me,
-                          size: 14,
-                          color: AppColors.primary,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Surubim, PE • Centro',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: AppColors.slateDeep,
-                            fontWeight: FontWeight.w600,
+                  GestureDetector(
+                    onTap: () => showNeighborhoodPicker(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.atmosphericBlue,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.near_me,
+                            size: 14,
+                            color: AppColors.primary,
                           ),
-                        ),
-                        const SizedBox(width: 6),
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: AppColors.actionEmerald,
-                            shape: BoxShape.circle,
+                          const SizedBox(width: 6),
+                          Text(
+                            'Surubim, PE • ${ref.watch(selectedNeighborhoodProvider) ?? 'Todos os bairros'}',
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: AppColors.slateDeep,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 16,
+                            color: AppColors.primary,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
