@@ -1,24 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/widgets/animated_logo.dart';
 
-/// Tempo mínimo da abertura, para a animação do logo terminar mesmo se a sessão carregar rápido.
-const splashMinDuration = Duration(milliseconds: 2400);
+/// Duração da animação de abertura.
+const splashDuration = Duration(milliseconds: 2400);
 
-class SplashScreen extends StatefulWidget {
+/// Vira `true` quando a animação de abertura termina; o roteador espera por isso para sair da abertura.
+class SplashFinished extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void finish() => state = true;
+}
+
+final splashFinishedProvider = NotifierProvider<SplashFinished, bool>(
+  SplashFinished.new,
+);
+
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: splashMinDuration,
-  )..forward();
+    duration: splashDuration,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        // Segura o logo pronto por um instante antes de sair.
+        Future.delayed(const Duration(milliseconds: 350), () {
+          if (mounted) ref.read(splashFinishedProvider.notifier).finish();
+        });
+      }
+    });
+    // Só começa depois do primeiro quadro desenhado, para nenhuma etapa ser "pulada".
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 200), () {
+        if (mounted) _controller.forward();
+      });
+    });
+  }
 
   @override
   void dispose() {

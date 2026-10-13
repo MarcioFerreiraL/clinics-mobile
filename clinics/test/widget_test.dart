@@ -25,7 +25,10 @@ void main() {
         child: const ClinicsApp(),
       ),
     );
-    await tester.pump(const Duration(seconds: 3));
+    // Avança a abertura (animação do logo) quadro a quadro.
+    for (var i = 0; i < 45; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
     await tester.pumpAndSettle();
 
     expect(find.text('Acesse sua conta'), findsOneWidget);

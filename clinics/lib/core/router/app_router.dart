@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,13 +18,8 @@ const _protectedRoutes = ['/profile', '/favorites'];
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
   ref.listen(authProvider, (_, _) => refresh.value++);
-  // Mantém a abertura na tela pelo menos o tempo da animação do logo.
-  var splashDone = false;
-  final timer = Timer(splashMinDuration, () {
-    splashDone = true;
-    refresh.value++;
-  });
-  ref.onDispose(timer.cancel);
+  // A abertura só termina quando a animação do logo acaba.
+  ref.listen(splashFinishedProvider, (_, _) => refresh.value++);
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
@@ -35,7 +28,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final auth = ref.read(authProvider);
       final path = state.matchedLocation;
-      if (auth.isLoading || !splashDone) return path == '/' ? null : '/';
+      if (auth.isLoading || !ref.read(splashFinishedProvider)) {
+        return path == '/' ? null : '/';
+      }
       final loggedIn = auth.value != null;
       if (path == '/') return loggedIn ? '/home' : '/login';
       if (!loggedIn && _protectedRoutes.contains(path)) return '/login';
