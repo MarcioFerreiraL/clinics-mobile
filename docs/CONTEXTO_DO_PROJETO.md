@@ -1,183 +1,205 @@
 # Contexto do Projeto Clinics (handoff entre sessões)
 
-> **Para o agente de IA que retomar este trabalho:** leia este arquivo inteiro antes de qualquer ação. Ele resume tudo que foi decidido e construído até 2026-10-12. Complementos: `docs/ROADMAP_ENTREGAS.md` (planejamento das Entregas 2 e 3) e a pasta `docs/` do repositório `clinics-backend`.
-> Atualize a seção **13. Registro de progresso** ao final de cada etapa.
+> **Para o agente de IA que retomar este trabalho:** leia este arquivo inteiro antes de qualquer ação. Ele resume tudo que foi decidido e construído até **2026-10-13**. Complementos: `docs/ROADMAP_ENTREGAS.md`, `docs/DISTRIBUICAO.md`, `docs/IDENTIDADE_VISUAL.md` (este repositório) e a pasta `docs/` do repositório `clinics-backend` (01 a 11).
+> Atualize a seção **15. Registro de progresso** ao final de cada etapa.
+> **Nunca escreva neste arquivo** senhas, tokens, chaves, o IP da VPS ou o conteúdo de `.env`.
 
 ---
 
 ## 1. O projeto em uma frase
 
-**Clinics** é um app móvel que compara preços de exames e consultas em clínicas de **Surubim-PE** e leva o paciente ao WhatsApp da clínica com a mensagem pronta. Trabalho da disciplina **Programação para Dispositivos Móveis**, em dupla: **Márcio Ferreira Lima** (usuário do Git: `MarcioFerreiraL`) e **Lucas Nascimento Barros**.
+**Clinics** é um app (Android + web instalável) que compara preços de exames e consultas em clínicas de **Surubim-PE** e leva o paciente ao WhatsApp da clínica com a mensagem pronta. Trabalho da disciplina **Programação para Dispositivos Móveis**, em dupla: **Márcio Ferreira Lima** (Git: `MarcioFerreiraL`, assina como **MárcioDev**) e **Lucas Nascimento Barros**.
 
 ## 2. Requisitos da avaliação (`docs/avaliacao.pdf`)
 
-Regras gerais: dupla, tema original, código no **GitHub público**, **muitos commits ao longo do tempo**, nomes da dupla no `README.md` e no comentário do Classroom, **o envio no Classroom é o link do último commit** (não do repositório). Descumprir qualquer item zera a nota. Cada entrega é apresentada oralmente em até 7 minutos.
+Regras gerais: dupla, tema original, código no **GitHub público**, **muitos commits ao longo do tempo**, nomes da dupla no `README.md` e no comentário do Classroom, **o envio no Classroom é o link do último commit** (não do repositório). Descumprir qualquer item zera a nota. Cada entrega é apresentada em até 7 minutos.
 
 | Entrega | Itens | Nota |
 |---|---|---|
-| **1** (feita) | Diagrama de casos de uso, README, protótipo Figma/Stitch, 6+ telas Flutter navegáveis | 10 |
-| **2** (em andamento) | Casos de uso +4 e diagrama de classes (2), back-end com 4+ UCs e endpoints (3), 3+ tabelas PostgreSQL (2), app integrado à API (2), 1 recurso do dispositivo (1) | 10 |
-| **3** (planejada) | +4 UCs no back-end (3), +3 tabelas (1), app integrado (2), +1 recurso do dispositivo (1), `.apk`/`.aab` assinado (2), diagramas e README refatorados (1), **bônus** JWT + RBAC (1) | 11 |
+| **1** (feita) | Diagrama de casos de uso, README, protótipo, 6+ telas Flutter | 10 |
+| **2** (praticamente pronta) | Casos de uso +4 e diagrama de classes, back-end 4+ UCs, 3+ tabelas PostgreSQL, app integrado à API, 1 recurso do dispositivo | 10 |
+| **3** (planejada) | +4 UCs, +3 tabelas, app integrado, +1 recurso do dispositivo, `.apk`/`.aab` assinado, diagramas/README refatorados, **bônus** JWT + RBAC | 11 |
 
 ## 3. Escopo e decisões do usuário
 
-- **Só a visão do paciente.** A visão da clínica (telas 7 e 8, gestão de exames, papel `CLINIC_MANAGER`) foi **adiada** por decisão do usuário.
-- **Ir além do mínimo do PDF**, com práticas de engenharia de software de nível profissional.
-- **Backend e frontend em repositórios separados**, irmãos em `~/Repositorio/`.
-- **Back-end em Spring Boot** (substituiu o Go previsto em `AGENTS.md`, `MVP_specification.md`, `docs/ARCHITECTURE.md` e `docs/API_SPECIFICATION.md`).
-- **4 recursos de dispositivo na Entrega 2:** GPS, voz, câmera/galeria e notificações locais. Biometria, compartilhar e modo offline ficam para a Entrega 3 (o usuário quer guardar ideias para ela).
-- **Tabelas da Entrega 3 só entram na Entrega 3** (`password_reset_tokens`, `search_history`, `consents`, `refresh_tokens`).
-- **Tudo da Entrega 3 é "para fazer depois"**, não entra agora.
-- Escopo de banco e UCs: modelo de **9 tabelas** e **12 casos de uso** (confirmado pelo usuário, incluindo catálogo separado `exam_types`, tabela de horários e favoritos por tipo de exame).
+- **Só a visão do paciente.** A visão da clínica (gestão de exames, papel `CLINIC_MANAGER`) foi adiada.
+- **Ir além do mínimo**, com práticas profissionais (testes, pipeline, deploy, carga).
+- Repositórios separados: `clinics-backend` (Spring Boot) e `clinics-mobile` (Flutter, na subpasta `clinics/`).
+- Branch de trabalho nos dois: **`develop`** (é a única; o deploy sai dela).
+- **Tudo da Entrega 3 fica para depois** (recuperar senha, histórico de buscas, LGPD, refresh token, RBAC, biometria, compartilhar, offline).
+- Identidade visual: **2D chapado, simples, sem degradê/textura/sombra elaborada**, cores **pastel**, só o texto com alto contraste. Paleta obrigatória: **branco + o azul `#0284C7` + verde-menta**. Créditos "MárcioDev e Lucas" na abertura, login, configurações e site.
+- **iPhone:** sem conta Apple Developer, então o iOS é atendido por **PWA** (versão web instalável). Um app iOS real exige Mac + conta paga (US$ 99/ano); o Flutter gera iOS, mas o build precisa de Xcode.
+- **Android:** APK assinado com **chave própria** (fora do Git), servido pelo próprio site.
 
 ## 4. Preferências de trabalho do usuário (seguir sempre)
 
-1. **Perguntar com frequência** antes de decisões relevantes. O usuário tem conhecimento de desenvolvimento e quer participar. Usar perguntas objetivas com opções e uma recomendada.
-2. **Documentação primeiro**: requisitos, histórias de usuário, regras de negócio, diagramas, MER, antes de codar. Os documentos guiam o desenvolvimento.
-3. **Pensar no banco antes de desenvolver**; MER em markdown com diagramas Mermaid.
-4. **Commits**: padrão Conventional Commits, **em português**, **curtos e objetivos**, um commit por unidade de trabalho. Terminar com a linha `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. Nada de corpo longo.
-5. **Testes**: domínio (unidade) + integração por endpoint com PostgreSQL real (Testcontainers).
-6. Código em inglês, textos ao usuário em pt-BR, JSON em `snake_case`.
-7. Responder em português, de forma direta.
+1. **Commits**: Conventional Commits **em português, curtos e objetivos**, um por unidade de trabalho, com a linha `Co-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`. Sempre commitar o que fizer (e dar push quando pedido; o usuário já pediu push várias vezes).
+2. **Perguntar antes de decisões relevantes** e antes de ações destrutivas ou irreversíveis (foi assim na limpeza da VPS: levantamento, confirmação, backup, remoção).
+3. **Documentação primeiro**: requisitos, regras, MER e diagramas guiam o código.
+4. **Não expor nada sensível no repositório** (`.env`, chaves, IP da VPS, senhas). Só `.env.example` é versionado.
+5. **A porta 8080 não pode ficar aberta para a internet.** A API só escuta em `127.0.0.1` na VPS; o acesso público é pelo Cloudflare Tunnel.
+6. Código em inglês, textos ao usuário em pt-BR, JSON em `snake_case`. Responder em português, direto.
+7. Verificar de verdade (testes, `curl`, capturas de tela do celular via `adb`) antes de afirmar que algo funciona; relatar falhas com honestidade.
+8. Quando o usuário estiver mexendo no celular, **não** enviar toques por `adb` (atrapalha).
 
-## 5. Estado do ambiente
+## 5. Ambiente local
 
 | Item | Situação |
 |---|---|
-| Repositório do app | `~/Repositorio/clinics-mobile` (branch `master`). Contém `clinics/` (Flutter), `docs/`, `AGENTS.md`, `MVP_specification.md` |
-| Repositório do back-end | `~/Repositorio/clinics-backend` (branch `main`), **49 commits**, árvore limpa, **ainda sem remote no GitHub** |
-| JDK | OpenJDK **25** (o usuário instalou `openjdk-25-jdk-headless`) |
-| Maven | Wrapper `./mvnw` (Maven 3.10.0) |
-| Docker | Disponível. Já existe um container `banco_dados` do usuário na porta **5432**; o do projeto é `clinics_postgres` na **5433** (`docker compose up -d`) |
-| Flutter/Dart | `/snap/bin/flutter` e `/snap/bin/dart` |
-| GitHub CLI (`gh`) | **Não instalado.** Para publicar: o usuário cria o repositório vazio e público no site e informa a URL, ou instala com `sudo apt install -y gh` + `gh auth login` |
-| Sudo | Não disponível para o agente; o usuário roda com `! comando` |
+| Repositórios | `~/Repositorio/clinics/clinics-backend` e `~/Repositorio/clinics/clinics-mobile` (remotos no GitHub, usuário `MarcioFerreiraL`, ambos públicos) |
+| JDK / Maven | OpenJDK **25**, wrapper `./mvnw` |
+| Docker | Disponível (testes com Testcontainers, build da imagem, k6) |
+| Flutter | 3.47.4 em `/snap/bin/flutter`; Android SDK em `~/Android/Sdk` (`adb`, `apksigner` em `platform-tools`/`build-tools`) |
+| `gh` CLI | **Não instalado.** Status do Actions é lido pela API pública do GitHub (`curl https://api.github.com/repos/MarcioFerreiraL/<repo>/actions/runs`) |
+| Chave SSH da VPS | Pasta `~/Repositorio/clinics/SSH KEYS/` (fora dos repositórios). O caminho tem **espaço**: sempre usar aspas / função shell, nunca variável sem aspas |
+| Chave de assinatura Android | `~/Keystores-clinics/` (`clinics-release.jks`, `LEIA-ME.txt` com senhas e instruções dos secrets). **Fazer backup.** Local: `clinics/android/key.properties` (ignorado pelo Git) |
+| Backups da limpeza da VPS | `~/Backups-vps/2026-10-13/` (bancos antigos, projetos, nginx, beszel) |
+| Celular de teste | Xiaomi/Android 16, conectado por USB quando o usuário avisa; tela 1220x2712 |
 
-## 6. Back-end `clinics-backend` (Entrega 2: **concluído e documentado**)
+## 6. Back-end `clinics-backend` (concluído, em produção)
 
-**Stack:** Java 25, **Spring Boot 4.1.1** (a versão no Maven Central é `4.1.1`, **sem** o sufixo `.RELEASE` que o Initializr gera), PostgreSQL 17, Flyway, Spring Security com JWT (OAuth2 Resource Server, HS256), BCrypt custo 10, Spring Data JPA (escrita) + `JdbcClient` (consultas), springdoc-openapi 3.1.1, JUnit 5, Testcontainers, ArchUnit.
+**Stack:** Java 25, Spring Boot 4.1.1 (versão Maven sem `.RELEASE`), PostgreSQL 17, Flyway, Spring Security + JWT (HS256), BCrypt custo 10, JPA (escrita) + `JdbcClient` (consultas), springdoc, JUnit 5, Testcontainers, ArchUnit. Arquitetura hexagonal por funcionalidade (`identity`, `catalog`, `engagement`, `shared`).
 
-**Arquitetura:** hexagonal por funcionalidade, três módulos: `identity`, `catalog`, `engagement`, mais `shared`. Domínio sem Spring/JPA/Jackson, verificado por `ArchitectureTest`. `engagement` consome o catálogo só pela porta pública (adaptador anticorrupção).
-
-**12 casos de uso implementados** (todos com testes de integração). Base `/api/v1`; JSON `snake_case`; erros RFC 9457 com campo `code`:
+**Casos de uso (13)**, base `/api/v1`, JSON `snake_case`, erros RFC 9457 com `code`:
 
 | UC | Endpoint | Acesso |
 |---|---|---|
-| UC01 | `POST /auth/register` | público |
+| UC01 | `POST /auth/register` (agora exige **CPF, e-mail e nascimento**) | público |
 | UC02 | `POST /auth/login` | público |
-| UC03 | `GET /exams/search` (`query`, `category`, `sort_by`, `lat`, `lng`, `page`, `size`) | público |
+| UC03 | `GET /exams/search` (query, category, sort_by, lat/lng, **neighborhood, min_price, max_price, min_rating, best_price_only**) | público |
 | UC04 | `GET /exams/{id}` | público |
 | UC05 | `GET /clinics/{id}` | público |
 | UC06 | `GET /exam-types/trending` | público |
-| UC07 | `POST /exams/{id}/contacts` (devolve `whatsapp_url`) | token opcional |
+| UC07 | `POST /exams/{id}/contacts` | token opcional |
 | UC08 | `GET /me/savings` | token |
-| UC09 | `GET /me/favorites`, `PUT`/`DELETE /me/favorites/{examTypeId}` | token |
-| UC10 | `GET /clinics/{id}/reviews`, `PUT`/`GET /clinics/{id}/reviews/me` | público / token |
-| UC11 | `GET`/`PUT /me`, `PUT /me/avatar` (multipart `file`) | token |
+| UC09 | favoritos `GET/PUT/DELETE /me/favorites...` | token |
+| UC10 | avaliações `/clinics/{id}/reviews...` | misto |
+| UC11 | `GET/PUT /me`, `PUT /me/avatar` | token |
 | UC12 | `PUT /me/password` | token |
+| UC13 | `GET /neighborhoods` | público |
 
-Arquivos de avatar: `GET /files/avatars/{arquivo}` (caminho relativo guardado em `avatar_url`; o app monta a URL base). Swagger em `/swagger-ui.html`, contrato em `/v3/api-docs`, health em `/actuator/health`.
+Importante: login e cadastro devolvem só um **resumo** do usuário; o perfil completo (CPF, e-mail, nascimento, foto) vem de `GET /me`.
 
-**Banco (9 tabelas, migrações V1 a V6):** `users`, `clinics`, `clinic_operating_hours`, `exam_types`, `exams` (oferta por clínica), `favorites`, `reviews`, `price_history`, `contact_events`. Seed: 6 clínicas, 18 tipos de exame, 31 ofertas, 5 pacientes de demonstração sem login e 21 avaliações. Exemplo de dado: "Ultrassom Abdominal Total" tem 5 ofertas de R$ 90 a R$ 140, média R$ 118.
+**Busca por nomes populares (RN39):** tabela `exam_type_aliases` (~190 apelidos, ex.: "colesterol" para Lipidograma, "esteira" para Teste Ergométrico). Casa por apelido dentro de frases maiores. **Limitação conhecida:** termos genéricos + específicos se somam ("ecografia da barriga" devolve 7 ofertas).
 
-**Documentação do back-end** em `clinics-backend/docs/`: `01-requisitos`, `02-historias-de-usuario`, `03-regras-de-negocio` (RN01 a RN36), `04-casos-de-uso`, `05-modelo-de-dados` (MER), `06-arquitetura-e-classes`, `07-referencia-da-api` (exemplos reais), `08-diagramas-de-sequencia`. README completo com os nomes da dupla. Todos os 18 diagramas Mermaid foram validados com o parser.
+**Banco:** 10 tabelas (+ `flyway_schema_history`), migrações **V1 a V9** (V7 CPF, V8 clínicas de demonstração de Surubim com nomes alterados de propósito, V9 apelidos). Seed: 6 clínicas (Clínica Santa Mariazinha, Laboratório São Zezinho, Bioclínica Diagnóstikos, Centro Médico Surubinzinho, Policlínica do Agrestão, Cardiocentro Surubim), bairros Centro, São José, Santa Rita, Bairro Novo e Cohab, 18 tipos de exame, 31 ofertas.
 
-**Testes:** 154 passando (unidade, integração com Testcontainers, arquitetura e contrato OpenAPI). Rodar: `./mvnw test` (precisa de Docker).
+**Site público servido pela API:** `/` página de download (`static/index.html`), `/app/` PWA do Flutter (gerado no deploy, **não versionado**), `/docs` redireciona para o Swagger UI, `/download/clinics.apk` APK do Android (de uma pasta/volume do servidor).
 
-**Como subir:** `cd ~/Repositorio/clinics-backend && docker compose up -d && ./mvnw spring-boot:run` (porta 8080).
+**Testes: 254, todos passando** (`./mvnw test`, precisa de Docker): unidade, integração por endpoint, arquitetura, contrato OpenAPI, **modelo de dados (MER)**, **consistência do seed**, **regras de negócio**, **jornada do paciente (RF01–RF12)**, download do APK. Matriz requisito/regra para teste em `docs/10-testes-e-rastreabilidade.md`.
 
-### Armadilhas já encontradas (evitar repetir)
+**Documentação (`clinics-backend/docs/`):** 01 requisitos, 02 histórias, 03 regras (RN01–RN39), 04 casos de uso, 05 modelo de dados, 06 arquitetura, 07 referência da API, 08 sequências, **09 deploy e pipeline**, **10 testes e rastreabilidade**, **11 testes de carga**.
 
-- **Spring Boot 4 / Jackson 3:** pacotes `tools.jackson.*`; `AutoConfigureMockMvc` está em `org.springframework.boot.webmvc.test.autoconfigure`. O springdoc usa Jackson 2 próprio e ignora o `SNAKE_CASE` da aplicação. Resolvido com `SnakeCaseModelConverter` (renomeia só as propriedades dos schemas; trocar a estratégia do mapper global **quebra** o próprio documento OpenAPI).
-- Mensagens de erro de validação devem usar `snake_case` nos campos (`FieldNames.toSnakeCase`).
-- No Mermaid de sequência, **`;` dentro de mensagem ou nota quebra o diagrama**. Trocar por vírgula ou travessão.
-- `pkill -f` com padrão que aparece no próprio comando derruba o shell. Usar arquivo de PID.
-- Em `HandlerExceptionResolver`, um `@ExceptionHandler(Exception.class)` sem estender `ResponseEntityExceptionHandler` transforma 404 de rota em 500.
-- Testes de integração compartilham o banco; quem altera o seed deve restaurar. Avaliações de teste usam clínica criada pelo próprio teste.
+**Arquivos de ambiente:** `.env.example` versionado; `.env` real só local e na VPS (ignorado pelo Git). `compose.yaml` = dev (banco + API pelo `Dockerfile`); `compose.prod.yaml` = produção (imagem pronta, limites de memória, Postgres ajustado, publica em `127.0.0.1`).
 
-## 7. App Flutter `clinics/` (Entrega 2: **não iniciado**)
+## 7. App Flutter `clinics-mobile/clinics/` (integrado à API)
 
-Estado atual (Entrega 1): ~3.200 linhas, 6 telas visuais com **dados mockados** (`lib/features/search/data/mock_data.dart`).
+- **Dependências principais:** `flutter_riverpod`, `go_router`, `dio`, `flutter_secure_storage`, `shared_preferences`, `geolocator`, `speech_to_text`, `image_picker`, `flutter_local_notifications`, `url_launcher`, `intl`, `google_fonts`.
+- **URL da API:** padrão `https://clinics.marciodev.com` (`ApiConfig`); sobrescrever com `--dart-define-from-file=.env` (modelo em `.env.example`). Emulador Android usa `http://10.0.2.2:8080`.
+- **Funcionalidades:** login/cadastro (CPF, e-mail, nascimento, máscaras de telefone/CPF/data, pt-BR), sessão persistida, busca com categoria/ordenação/**filtros** (bairro, preço, nota, melhor preço) e "Mais Próximo", **seletor de bairro** na home, busca por **voz**, detalhes (favoritar, lembrete de preparo, contato WhatsApp registrado na API), ficha da clínica com avaliações, favoritos, perfil (total economizado, editar, trocar senha, foto), **Configurações** (ícone no canto superior direito), toque no card inteiro abre o detalhe.
+- **Recursos do dispositivo:** GPS, voz, câmera/galeria, notificações locais (queda de preço de favoritos e lembrete). No **navegador** as notificações não existem (o app avisa).
+- **Estado de rede:** `NetworkActivityOverlay` mostra barra no topo (após 0,25 s) e aviso com o pino pulando (após 0,8 s); toda requisição tem **limite total de 25 s** (falha vira "Tentar novamente"). Telas de carregamento de marca (`ClinicsLoader`, esqueletos, splash animada).
+- **Identidade:** logo = pino azul com cruz branca e selo menta (gerado por `tool/generate_logo.py`); ilustrações 2D por categoria de exame (`tool/generate_exam_art.py`, `assets/exams/`, trocáveis por fotos); avatar com a inicial do nome. Tokens em `lib/core/theme/app_colors.dart`.
+- **Tela de abertura:** splash nativa só branca + animação própria do logo (cai, quica, cruz, selo, check desenhado). A saída da abertura espera a animação terminar.
+- **Android:** ícone adaptativo, assinatura de release por `key.properties` (local) ou variáveis de ambiente (CI).
+- **Web (PWA):** pasta `web/` com manifesto e ícones; build com `--base-href /app/`.
+- **Testes:** `flutter test` (14+ testes: máscaras, auth, exceções de API, indicador de rede, card de local, widget de login). `flutter analyze` limpo.
 
-- Dependências: `flutter_riverpod ^3.4.3`, `go_router ^18`, `google_fonts`, `url_launcher`.
-- Estrutura: `lib/core/{router,theme,utils}` e `lib/features/{auth,search,exam,clinic,profile}` (maioria só com `presentation/`; `search` tem `data/` e `domain/`).
-- Telas: login/cadastro, início/busca, drawer, resultados, detalhes do exame, perfil do usuário, ficha da clínica.
-- Design: tokens em `docs/DESIGN_SYSTEM.md` (Primary `#0284C7`, Atmospheric Blue `#E0F2FE`, WhatsApp `#25D366`, canvas `#F8FAFC`; Plus Jakarta Sans + Inter; cards 16px, botões 12px, chips pill).
-- Protótipo: `docs/prototype/pages/*/screen.png` (nome **Clara Saúde** no protótipo vs **Clinics** no código; padronizar).
+## 8. Infra e produção
 
-### O que falta fazer no app (Entrega 2)
+**Domínio:** `https://clinics.marciodev.com` (Cloudflare Tunnel; o `cloudflared` da VPS é **gerenciado pelo painel**, usa token; a rota Public Hostname aponta para `localhost:8080`).
 
-1. **Camada de dados real** (`data/`, Riverpod `AsyncNotifier`): cliente HTTP (sugestão: `dio` com interceptor de JWT), repositórios que chamam a API, DTOs com `fromJson`, tratamento do formato de erro RFC 9457 (`code`).
-2. **Autenticação:** login e cadastro reais, guardar o token (sugestão `flutter_secure_storage`; a biometria é Entrega 3), redirecionamento no `go_router`, logout.
-3. **Integrar as telas:** busca (com filtros e ordenação), resultados (média, economia, selo "Melhor preço", distância), detalhes (aberto agora, preparo), ficha da clínica (horários, avaliações), favoritos, avaliação, perfil (editar, senha, foto, total economizado), "Em alta" na home.
-4. **Recursos do dispositivo:**
-   - **GPS** (`geolocator`): enviar `lat`/`lng` na busca e nos detalhes; filtro "Mais Próximo".
-   - **Voz** (`speech_to_text`): microfone da tela inicial alimenta a busca.
-   - **Câmera/galeria** (`image_picker`): foto de perfil via `PUT /me/avatar`.
-   - **Notificações locais** (`flutter_local_notifications`): alerta de queda de preço dos favoritos (comparar `min_price` da API com o valor guardado) e lembrete de jejum do exame.
-5. **URL base da API:** emulador Android usa `http://10.0.2.2:8080`; aparelho físico usa o IP da máquina. Tornar configurável (`--dart-define`).
-6. Cuidados Android: permissões de localização, microfone, câmera e notificações; `usesCleartextTraffic` para HTTP em desenvolvimento.
+**VPS (Oracle, Ubuntu 22.04, 2 CPUs, ~1 GB RAM, 7 GB swap):** foi **limpa** a pedido do usuário (outros projetos removidos, com backup antes). Hoje roda **só** a API + PostgreSQL em Docker (`/opt/clinics-backend`), mais `cloudflared`, SSH e Docker. Firewall (ufw) **só com a porta 22 aberta**. Ajustes: API 600 MB (JVM serial GC, heap 65%), Postgres 200 MB (parâmetros afinados), pool 10, Tomcat 100 threads, logs rotacionados, `vm.swappiness=10`. Mantidos de propósito: agente da Oracle e `iscsid` (desligar pode afetar o disco). Segredos de produção só em `/opt/clinics-backend/.env` na VPS (gerados aleatoriamente no primeiro deploy).
 
-## 8. Documentação antiga que precisa de correção (repositório do app)
+**Pipelines (GitHub Actions):**
+- `clinics-backend/.github/workflows/ci-cd.yml`: testes, build da imagem e **deploy automático** em push na `develop` (gera o PWA a partir do repo do app, constrói a imagem, envia por SSH, sobe, roda smoke test). Secrets usados: `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY` (já criados pelo usuário).
+- `clinics-backend/.github/workflows/performance.yml`: k6 sob demanda e toda segunda.
+- `clinics-mobile/.github/workflows/ci.yml`: analisar, testar, gerar APK de debug; job `release` publica o **APK assinado** na release fixa `app-latest` **somente se** os secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD` existirem (**ainda não criados pelo usuário**; sem eles só emite aviso).
 
-Ainda descreve Go/Fiber/GORM e a numeração antiga de casos de uso:
-`AGENTS.md`, `MVP_specification.md`, `docs/ARCHITECTURE.md`, `docs/API_SPECIFICATION.md` (endpoints e campos mudaram; usar `clinics-backend/docs/07-referencia-da-api.md` como fonte), `README.md` do app (atualizar casos de uso, tecnologias, instruções) e `docs/ROADMAP_ENTREGAS.md` (usa a numeração antiga de UCs; a atual está na seção 6 e em `clinics-backend/docs/04-casos-de-uso.md`).
+**Distribuição do app:** o botão "Baixar APK" do site baixa de `/download/clinics.apk` (arquivo na VPS). O deploy tenta atualizar esse arquivo a partir da release `app-latest`; sem release, mantém o que está lá. Para publicar um APK à mão: `clinics-backend/deploy/publish-apk.sh`. O APK atual publicado é o assinado com a chave própria, com as correções até 2026-10-13.
 
-Também falta o **documento de casos de uso e o diagrama de classes** exigidos pela Entrega 2 no repositório do app, se o grupo preferir entregar por lá (hoje estão no back-end).
+**Desempenho medido** (ambiente espelho da VPS + produção real, `clinics-backend/docs/11-testes-de-carga.md`): busca p95 de milissegundos, ~1.600 req/s de pico sem erro, memória estável; em produção via Cloudflare mediana de 54 ms e p95 de 227 ms na busca (RNF03 atendido). Threads virtuais foram testadas e **não ajudaram** (não ligadas). Cadastro/login (BCrypt) é o gargalo esperado e não foi saturado.
 
-## 9. Entrega 3 (planejada, **não fazer agora**)
+## 9. Armadilhas já encontradas (evitar repetir)
 
-**Casos de uso (UC13 a UC18):** recuperar senha (`password_reset_tokens`), histórico de buscas (`search_history`), consentimento LGPD (`consents`), exportar meus dados, excluir conta (anonimiza avaliações e contatos), renovar sessão com refresh token (`refresh_tokens`). Mínimo exigido: 4 UCs e 3 tabelas.
+- **Spring Boot 4 / Jackson 3:** pacotes `tools.jackson.*`; springdoc ignora `SNAKE_CASE` do mapper global (resolvido com `SnakeCaseModelConverter`). Mermaid de sequência: `;` em mensagem quebra o diagrama.
+- **`pkill -f` com padrão presente no próprio comando derruba o shell.** Usar arquivo de PID ou `kill $(...)`.
+- **Docker ignora o ufw ao publicar portas.** Sempre `127.0.0.1:8080:8080`, nunca `8080:8080`. (A 8080 já esteve acessível de fora por isso e foi corrigida.)
+- **Caminho da chave SSH tem espaço:** usar aspas; `$R` com a chave dentro quebra.
+- **A imagem base do Docker não tem `curl`:** o `Dockerfile` instala `curl` para o healthcheck.
+- **VPS pequena:** não compilar Maven nela; a imagem é construída fora (CI/máquina local) e enviada. A primeira chamada de `/v3/api-docs` a frio pode passar de 10 s.
+- **Flutter:** `StateProvider` não existe no Riverpod 3 (usar `Notifier`); `dart format` reflui o código e quebra replace de texto em scripts (conferir se a edição foi aplicada, pois um `fromJson` sem o CPF passou despercebido por isso); widgets animados sempre presentes (ex.: barra de progresso invisível) impedem `pumpAndSettle` e gastam bateria: só construir enquanto visíveis; mexer em provider durante o build exige `Future.microtask`.
+- **`flutter create --platforms web` altera `analysis_options.yaml` e `.metadata`:** conferir o diff.
+- **Login/cadastro só devolvem resumo:** o app precisa chamar `GET /me` depois.
+- **APK de debug x release:** assinaturas diferentes; trocar exige `adb uninstall` (apaga só dados locais).
+- **Workflow do GitHub:** `defaults.run.working-directory` quebra passos que rodam antes do checkout; secrets não podem ser usados direto em `if` (usar `env`); nomes de passo com `:` precisam de aspas.
+- **Testes de integração compartilham o banco:** quem grava deve ser `@Transactional` (rollback) ou restaurar o estado.
+- **Chromium headless sem GPU é lento** para o Flutter web; não serve para ver o app web completo.
 
-**Bônus JWT + RBAC:** `@PreAuthorize` por papel (`PATIENT`, `CLINIC_MANAGER`, `ADMIN`), endpoint exclusivo de admin e testes de autorização. O JWT já existe. Rotas de gestão de exame exigem dono da clínica (`owner_user_id` = usuário do token), com 403 caso contrário (anti-IDOR).
+## 10. Documentação antiga que ainda precisa de correção (repositório do app)
 
-**Dispositivo (+1 obrigatório):** biometria + armazenamento seguro (`local_auth`, `flutter_secure_storage`), compartilhar exame (`share_plus`), modo offline com cache (`connectivity_plus` + `drift`). Extras opcionais: geocodificação reversa do bairro (`geocoding`), lembrete no calendário.
+Ainda descrevem Go/Fiber/GORM e a numeração antiga de casos de uso: `AGENTS.md`, `MVP_specification.md`, `docs/ARCHITECTURE.md`, `docs/API_SPECIFICATION.md` (usar `clinics-backend/docs/07-referencia-da-api.md` como fonte), `README.md` do app (casos de uso, tecnologias) e `docs/ROADMAP_ENTREGAS.md` (numeração antiga de UCs). Também falta o **documento de casos de uso e o diagrama de classes** no repositório do app, se o grupo preferir entregar por lá (hoje estão no back-end).
 
-**Deploy e docs:** gerar keystore e `.apk`/`.aab` assinado (`key.properties` fora do git); hospedar back-end e PostgreSQL (Render, Railway ou Fly.io) e apontar o app; refatorar diagramas; README completo.
+## 11. Entrega 3 (planejada, **não fazer agora**)
 
-**Ideias de produto se sobrar tempo:** gráfico de evolução do preço (`price_history`), "atende hoje" a partir dos horários, visão da clínica (telas 7 e 8, CRUD de exames), registro automático em `price_history` a cada mudança de preço (RN13).
+A numeração dos UCs mudou (UC13 hoje é "bairros"). Pendentes: recuperar senha (`password_reset_tokens`), histórico de buscas (`search_history`), consentimento LGPD (`consents`), exportar/excluir dados, refresh token (`refresh_tokens`), **bônus JWT + RBAC** (`@PreAuthorize`, endpoint de admin, anti-IDOR), biometria, compartilhar, modo offline, gráfico de `price_history`, visão da clínica. **APK assinado já existe** (item de 2 pontos); falta o `.aab` se for exigido.
 
-## 10. Pendências imediatas, em ordem sugerida
+## 12. Pendências imediatas, em ordem sugerida
 
-1. **Publicar o back-end no GitHub (público).** Obrigatório pelo PDF. Depois: `git remote add origin <url>` e `git push -u origin main` em `clinics-backend`.
-2. Commitar `docs/ROADMAP_ENTREGAS.md` e este arquivo no `clinics-mobile` (estão sem commit).
-3. Atualizar os documentos antigos do app (seção 8).
-4. **Integrar o app Flutter à API** (seção 7), começando por: cliente HTTP + login/cadastro, depois busca/detalhes, depois favoritos/avaliações/perfil, depois os 4 recursos do dispositivo.
-5. Revisar o histórico de commits do app: o PDF exige commits distribuídos ao longo do desenvolvimento.
-6. Preparar a apresentação de 7 minutos da Entrega 2.
+1. **Usuário criar os 4 secrets `ANDROID_KEYSTORE_*` no repositório do app** (valores em `~/Keystores-clinics/LEIA-ME.txt`) e **fazer backup de `~/Keystores-clinics/`**. Depois disso o CI publica o APK na release `app-latest`.
+2. **Build novo no celular** (o instalado é de antes dos cards de exame refeitos e do limite de tempo de requisição): pedir ao usuário para conectar e rodar `flutter build apk --release --dart-define=API_BASE_URL=https://clinics.marciodev.com`, `adb install`.
+3. Oferecido e **aguardando resposta**: publicar **APK só de 64 bits** (cerca de 1/3 do tamanho, download bem mais rápido; celulares muito antigos não instalariam).
+4. Atualizar os documentos antigos do app (seção 10) e escrever o diagrama de classes/casos de uso se necessário.
+5. Mais testes automáticos no app e, se houver tempo, teste de carga com muitos cadastros (BCrypt).
+6. Opcional: desligar `/swagger-ui` e `/v3/api-docs` em produção (o usuário pediu a OpenAPI visível, então por ora ficam); HTTPS já vem do Cloudflare.
+7. Preparar a apresentação de 7 minutos (roteiro: problema, demo no celular, arquitetura, testes/pipeline/deploy, carga).
+8. O IP da VPS aparece em um commit antigo do histórico do back-end (já removido dos arquivos); reescrever histórico só se o usuário pedir.
 
-## 11. Arquivos importantes
+## 13. Arquivos importantes
 
 | Caminho | Para quê |
 |---|---|
 | `clinics-mobile/docs/avaliacao.pdf` | Requisitos da avaliação |
-| `clinics-mobile/docs/ROADMAP_ENTREGAS.md` | Planejamento das entregas (numeração de UCs desatualizada) |
-| `clinics-mobile/docs/DESIGN_SYSTEM.md` | Tokens de design obrigatórios |
-| `clinics-mobile/docs/prototype/pages/` | Telas do protótipo (screen.png e code.html) |
-| `clinics-backend/docs/07-referencia-da-api.md` | Contrato da API com exemplos reais (fonte para o app) |
-| `clinics-backend/docs/03-regras-de-negocio.md` | RN01 a RN36 |
-| `clinics-backend/src/main/resources/db/migration/` | Esquema e seed |
-| `clinics-backend/src/test/java/br/com/clinics/TestUsers.java` | Helper para criar pacientes nos testes |
+| `clinics-mobile/docs/DISTRIBUICAO.md` | APK, PWA e chave de assinatura |
+| `clinics-mobile/docs/IDENTIDADE_VISUAL.md` | Paleta, logo, movimento |
+| `clinics-mobile/clinics/lib/core/` | Rede (`api_client`, `network_activity`), tema, widgets de marca |
+| `clinics-backend/docs/` | Documentação 01–11 |
+| `clinics-backend/deploy/` | `deploy.sh`, `build-web.sh`, `publish-apk.sh`, `smoke-test.sh` |
+| `clinics-backend/loadtest/` | Cenários k6 e ambiente espelho |
+| `clinics-backend/src/main/resources/db/migration/` | Esquema e seed (V1–V9) |
+| `clinics-backend/src/main/resources/static/index.html` | Página de download do site |
 
-## 12. Comandos úteis
+## 14. Comandos úteis
 
 ```bash
-# back-end
-cd ~/Repositorio/clinics-backend
-docker compose up -d && ./mvnw spring-boot:run     # API em :8080
-./mvnw test                                         # 154 testes
-curl localhost:8080/api/v1/exams/search?query=ultrassom
+# back-end (dev)
+cd ~/Repositorio/clinics/clinics-backend
+cp .env.example .env && docker compose up -d postgres && set -a && . ./.env && set +a && ./mvnw spring-boot:run
+./mvnw test                                   # 254 testes (precisa de Docker)
+deploy/smoke-test.sh https://clinics.marciodev.com
+loadtest/run.sh load                          # k6 (suba antes o loadtest/compose.loadtest.yaml)
 
 # app
-cd ~/Repositorio/clinics-mobile/clinics
+cd ~/Repositorio/clinics/clinics-mobile/clinics
 flutter pub get && flutter analyze && flutter test
-flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080   # (a definir no app)
+flutter run --dart-define-from-file=.env
+flutter build apk --release --dart-define=API_BASE_URL=https://clinics.marciodev.com
+adb install -r build/app/outputs/flutter-apk/app-release.apk      # PATH: ~/Android/Sdk/platform-tools
+
+# deploy manual (normalmente o pipeline faz)
+cd ~/Repositorio/clinics/clinics-backend && deploy/build-web.sh && deploy/deploy.sh usuario@IP "caminho/da/chave"
+
+# status do CI sem gh
+curl -s https://api.github.com/repos/MarcioFerreiraL/clinics-backend/actions/runs?per_page=1
 ```
 
-## 13. Registro de progresso
+## 15. Registro de progresso
 
-- **2026-10-12** · Levantamento do PDF, análise tela a tela, decisão de escopo (12 UCs, 9 tabelas, 4 recursos de dispositivo). Roadmap criado.
-- **2026-10-12** · Back-end completo: docs 01 a 08, migrações V1 a V6, 12 casos de uso, OpenAPI, 154 testes, README. 49 commits em `clinics-backend`.
-- **2026-10-12** · Este arquivo de contexto criado.
-- **2026-10-13** · Repositórios publicados no GitHub (branch `develop`). App integrado à API: cliente `dio` com JWT, login/cadastro com sessão persistida, busca (categoria, ordenação, GPS), detalhes com contato WhatsApp (UC07), ficha da clínica com avaliações (UC10), favoritos (UC09), perfil com economia, edição, senha e foto (UC08, UC11, UC12). Recursos de dispositivo: GPS, voz, câmera/galeria e notificações locais (queda de preço e lembrete de preparo). Mocks removidos. Compila em debug com `--dart-define=API_BASE_URL`.
-- **Próximo:** testar no aparelho físico, escrever testes do app, atualizar documentos antigos (seção 8) e preparar a apresentação.
+- **2026-10-12** · Levantamento do PDF, escopo, back-end completo (12 UCs, 9 tabelas, 154 testes), docs 01 a 08, roadmap, primeiro arquivo de contexto.
+- **2026-10-13** · Repositórios publicados no GitHub. App integrado à API (auth, busca, detalhes, clínica, favoritos, perfil) e 4 recursos de dispositivo. CPF no cadastro, filtros, bairros (UC13), busca por nomes populares, clínicas de Surubim no seed.
+- **2026-10-13** · Identidade visual pastel 2D (logo, ícone, splash animada, carregamento, avatar com inicial), configurações, indicador global de requisições, logo maior.
+- **2026-10-13** · Docker + compose, deploy na VPS Oracle, Cloudflare Tunnel (`clinics.marciodev.com`), limpeza da VPS com backup, firewall só com SSH, ajuste de desempenho, pipeline CI/CD (deploy automático validado), smoke test pós-deploy.
+- **2026-10-13** · 254 testes no back-end (MER, regras, seed, jornada), testes de carga k6 (smoke, load, stress, spike, soak, latência em produção), docs 09 a 11.
+- **2026-10-13** · Site de download na raiz, PWA para iPhone em `/app/`, APK assinado com chave própria servido em `/download/clinics.apk`, `/docs` para a OpenAPI.
+- **2026-10-13** · Correções: perfil não mostrava CPF/e-mail/nascimento (resumo do login e `fromJson` sem CPF), requisições sem limite de tempo; cards de exame refeitos (local de atendimento, ilustração no preço, botão "Ver mais").
+- **Próximo:** secrets do keystore no GitHub, build novo no celular, decidir APK 64 bits, atualizar docs antigas e preparar a apresentação.
