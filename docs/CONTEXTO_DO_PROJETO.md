@@ -134,6 +134,7 @@ Importante: login e cadastro devolvem só um **resumo** do usuário; o perfil co
 - **APK de debug x release:** assinaturas diferentes; trocar exige `adb uninstall` (apaga só dados locais).
 - **Workflow do GitHub:** `defaults.run.working-directory` quebra passos que rodam antes do checkout; secrets não podem ser usados direto em `if` (usar `env`); nomes de passo com `:` precisam de aspas.
 - **Testes de integração compartilham o banco:** quem grava deve ser `@Transactional` (rollback) ou restaurar o estado.
+- **Cloudflare 530 / erro 1033:** o domínio fica fora do ar quando o `cloudflared` da VPS não registra o túnel. Em 15/10 a causa foi **"Unauthorized: Invalid tunnel secret"** (o segredo do túnel foi trocado no painel da Cloudflare; o token em `/etc/cloudflared/token` na VPS, intacto desde 19/08, ficou inválido). Em QUIC o log só mostra "control stream failure"; para ver a mensagem real, rodar um conector temporário com `--protocol http2`. Correção: gerar o token novo no painel e gravar em `/etc/cloudflared/token` (sem expô-lo no chat), depois `sudo systemctl restart cloudflared`. A API e a VPS estavam saudáveis o tempo todo.
 - **Chromium headless sem GPU é lento** para o Flutter web; não serve para ver o app web completo.
 
 ## 10. Documentação antiga que ainda precisa de correção (repositório do app)
@@ -202,4 +203,5 @@ curl -s https://api.github.com/repos/MarcioFerreiraL/clinics-backend/actions/run
 - **2026-10-13** · 254 testes no back-end (MER, regras, seed, jornada), testes de carga k6 (smoke, load, stress, spike, soak, latência em produção), docs 09 a 11.
 - **2026-10-13** · Site de download na raiz, PWA para iPhone em `/app/`, APK assinado com chave própria servido em `/download/clinics.apk`, `/docs` para a OpenAPI.
 - **2026-10-13** · Correções: perfil não mostrava CPF/e-mail/nascimento (resumo do login e `fromJson` sem CPF), requisições sem limite de tempo; cards de exame refeitos (local de atendimento, ilustração no preço, botão "Ver mais").
+- **2026-10-15** · Domínio fora do ar (Cloudflare 530/1033). Diagnóstico: API e VPS ok; túnel rejeitado com "Invalid tunnel secret" desde 13/10 ~19h UTC. Aguardando o usuário atualizar o token do túnel.
 - **Próximo:** secrets do keystore no GitHub, build novo no celular, decidir APK 64 bits, atualizar docs antigas e preparar a apresentação.
