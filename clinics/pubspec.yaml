@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -38,6 +40,17 @@ dependencies:
   go_router: ^18.0.1
   google_fonts: ^8.2.1
   url_launcher: ^6.3.2
+  dio: ^5.11.1
+  flutter_secure_storage: ^11.2.0
+  image_picker: ^1.2.4
+  http_parser: ^4.1.2
+  geolocator: ^14.1.1
+  speech_to_text: ^7.5.0
+  flutter_local_notifications: ^22.3.2
+  shared_preferences: ^2.5.6
+  timezone: ^0.11.2
+  flutter_timezone: ^5.1.1
+  intl: ^0.20.3
 
 dev_dependencies:
   flutter_test:
@@ -49,6 +62,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -60,6 +75,10 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/branding/logo_mark.png
+    - assets/exams/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -91,3 +110,18 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "assets/branding/app_icon.png"
+  adaptive_icon_background: "#E3F2FB"
+  adaptive_icon_foreground: "assets/branding/app_icon_foreground.png"
+
+flutter_native_splash:
+  # Tela nativa só branca: a animação do logo (Flutter) é a primeira coisa que aparece.
+  color: "#FFFFFF"
+  android_12:
+    color: "#FFFFFF"
+    image: "assets/branding/splash_empty.png"
+    icon_background_color: "#FFFFFF"

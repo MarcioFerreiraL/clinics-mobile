@@ -1,34 +1,116 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_colors.dart';
 
-class LoginScreen extends StatefulWidget {
+import '../../../../core/widgets/app_logo.dart';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/network/api_exception.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/input_masks.dart';
+import '../providers/auth_provider.dart';
+
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool isLoginTab = true;
-  bool isPhoneMethod = true;
   bool obscurePassword = true;
+  bool loading = false;
+  String? errorMessage;
+  ApiException? apiError;
 
-  final phoneController = TextEditingController(text: '(81) 99876-5432');
-  final passwordController = TextEditingController(text: '123456');
+  final phoneController = TextEditingController();
+  final passwordController = TextEditingController();
   final nameController = TextEditingController();
+  final cpfController = TextEditingController();
+  final emailController = TextEditingController();
+  final birthController = TextEditingController();
 
   @override
   void dispose() {
     phoneController.dispose();
     passwordController.dispose();
     nameController.dispose();
+    cpfController.dispose();
+    emailController.dispose();
+    birthController.dispose();
     super.dispose();
   }
 
-  void _handleAuth() {
-    // Navigate to Home
-    context.go('/home');
+  Future<void> _pickBirthDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: parseBrDate(birthController.text) ?? DateTime(1990),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) birthController.text = formatBrDate(picked);
+  }
+
+  Future<void> _handleAuth() async {
+    final name = nameController.text.trim();
+    final phone = onlyDigits(phoneController.text);
+    final cpf = onlyDigits(cpfController.text);
+    final email = emailController.text.trim();
+    final birth = parseBrDate(birthController.text);
+    final password = passwordController.text;
+
+    String? problem;
+    if (phone.isEmpty || password.isEmpty) {
+      problem = 'Preencha todos os campos.';
+    } else if (!isLoginTab) {
+      if (name.isEmpty ||
+          cpf.isEmpty ||
+          email.isEmpty ||
+          birthController.text.isEmpty) {
+        problem = 'Preencha todos os campos.';
+      } else if (birth == null || birth.isAfter(DateTime.now())) {
+        problem = 'Informe uma data de nascimento válida (dd/mm/aaaa).';
+      }
+    }
+    if (problem != null) {
+      setState(() {
+        apiError = null;
+        errorMessage = problem;
+      });
+      return;
+    }
+
+    setState(() {
+      loading = true;
+      errorMessage = null;
+      apiError = null;
+    });
+    final auth = ref.read(authProvider.notifier);
+    try {
+      if (isLoginTab) {
+        await auth.login(phone, password);
+      } else {
+        await auth.register(
+          fullName: name,
+          phone: phone,
+          cpf: cpf,
+          email: email,
+          birthDate: toIsoDate(birth!),
+          password: password,
+        );
+      }
+      if (mounted) context.go('/home');
+    } on ApiException catch (e) {
+      if (mounted) {
+        setState(() {
+          apiError = e;
+          errorMessage = e.message;
+        });
+      }
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
   }
 
   @override
@@ -42,14 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
         elevation: 0,
         title: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppColors.atmosphericBlue,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.health_and_safety, color: AppColors.primary, size: 20),
-            ),
+            AppLogo(size: 42),
             const SizedBox(width: 8),
             Text(
               'Clinics',
@@ -70,11 +145,17 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.location_on, size: 14, color: AppColors.primary),
+                const Icon(
+                  Icons.location_on,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   'Surubim, PE',
-                  style: theme.textTheme.labelSmall?.copyWith(color: AppColors.primary),
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: AppColors.primary,
+                  ),
                 ),
               ],
             ),
@@ -88,17 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 12),
-              Center(
-                child: Container(
-                  width: 54,
-                  height: 54,
-                  decoration: const BoxDecoration(
-                    color: AppColors.atmosphericBlue,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.health_and_safety, size: 28, color: AppColors.primary),
-                ),
-              ),
+              Center(child: AppLogo(size: 104)),
               const SizedBox(height: 16),
               Text(
                 isLoginTab ? 'Acesse sua conta' : 'Crie sua conta',
@@ -132,15 +203,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
-                            color: isLoginTab ? Colors.white : Colors.transparent,
+                            color: isLoginTab
+                                ? Colors.white
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(999),
                             boxShadow: isLoginTab
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
-                                    )
+                                    ),
                                   ]
                                 : null,
                           ),
@@ -148,7 +223,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             'Entrar',
                             style: theme.textTheme.labelLarge?.copyWith(
-                              color: isLoginTab ? AppColors.primary : AppColors.slateSecondary,
+                              color: isLoginTab
+                                  ? AppColors.primary
+                                  : AppColors.slateSecondary,
                             ),
                           ),
                         ),
@@ -160,15 +237,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           decoration: BoxDecoration(
-                            color: !isLoginTab ? Colors.white : Colors.transparent,
+                            color: !isLoginTab
+                                ? Colors.white
+                                : Colors.transparent,
                             borderRadius: BorderRadius.circular(999),
                             boxShadow: !isLoginTab
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
-                                    )
+                                    ),
                                   ]
                                 : null,
                           ),
@@ -176,7 +257,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             'Cadastrar',
                             style: theme.textTheme.labelLarge?.copyWith(
-                              color: !isLoginTab ? AppColors.primary : AppColors.slateSecondary,
+                              color: !isLoginTab
+                                  ? AppColors.primary
+                                  : AppColors.slateSecondary,
                             ),
                           ),
                         ),
@@ -199,63 +282,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Phone vs Email pill selector
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Acessar com:',
-                          style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: AppColors.surfaceMuted,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              GestureDetector(
-                                onTap: () => setState(() => isPhoneMethod = true),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: isPhoneMethod ? Colors.white : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    'Telefone',
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: isPhoneMethod ? AppColors.primary : AppColors.slateSecondary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () => setState(() => isPhoneMethod = false),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: !isPhoneMethod ? Colors.white : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    'E-mail',
-                                    style: theme.textTheme.labelSmall?.copyWith(
-                                      color: !isPhoneMethod ? AppColors.primary : AppColors.slateSecondary,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-
                     if (!isLoginTab) ...[
-                      Text('Nome Completo', style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+                      Text(
+                        'Nome Completo',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                       const SizedBox(height: 6),
                       TextField(
                         controller: nameController,
@@ -268,55 +301,117 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
 
                     Text(
-                      isPhoneMethod ? 'WhatsApp ou Celular' : 'Seu E-mail',
-                      style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                      'WhatsApp ou Celular',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     TextField(
                       controller: phoneController,
-                      keyboardType: isPhoneMethod ? TextInputType.phone : TextInputType.emailAddress,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [MaskFormatter.phone],
                       decoration: InputDecoration(
-                        prefixIcon: Icon(
-                          isPhoneMethod ? Icons.phone_iphone : Icons.email_outlined,
-                          size: 20,
+                        prefixIcon: const Icon(Icons.phone_iphone, size: 20),
+                        hintText: '(81) 99876-5432',
+                        errorText: apiError?.fieldMessage('phone'),
+                        suffixIcon: Container(
+                          margin: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceMuted,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'DDD 81',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.slateSecondary,
+                            ),
+                          ),
                         ),
-                        hintText: isPhoneMethod ? '(81) 99876-5432' : 'seuemail@exemplo.com',
-                        suffixIcon: isPhoneMethod
-                            ? Container(
-                                margin: const EdgeInsets.all(8),
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppColors.surfaceMuted,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: const Text(
-                                  'DDD 81',
-                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.slateSecondary),
-                                ),
-                              )
-                            : null,
                       ),
                     ),
                     const SizedBox(height: 14),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Sua senha', style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
-                        if (isLoginTab)
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              'Esqueci a senha',
-                              style: theme.textTheme.labelSmall?.copyWith(color: AppColors.primary),
-                            ),
+                    if (!isLoginTab) ...[
+                      Text(
+                        'CPF',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: cpfController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [MaskFormatter.cpf],
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.badge_outlined,
+                            size: 20,
                           ),
-                      ],
+                          hintText: '000.000.000-00',
+                          errorText: apiError?.fieldMessage('cpf'),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        'E-mail',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.email_outlined,
+                            size: 20,
+                          ),
+                          hintText: 'seuemail@exemplo.com',
+                          errorText: apiError?.fieldMessage('email'),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        'Data de nascimento',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: birthController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [MaskFormatter.date],
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.cake_outlined, size: 20),
+                          hintText: 'dd/mm/aaaa',
+                          errorText: apiError?.fieldMessage('birth_date'),
+                          suffixIcon: IconButton(
+                            icon: const Icon(
+                              Icons.calendar_month_outlined,
+                              size: 20,
+                            ),
+                            onPressed: _pickBirthDate,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                    ],
+
+                    Text(
+                      'Sua senha',
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     TextField(
@@ -325,71 +420,60 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock_outline, size: 20),
                         hintText: '••••••••',
+                        errorText: apiError?.fieldMessage('password'),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            obscurePassword ? Icons.visibility_off : Icons.visibility,
+                            obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                             size: 20,
                             color: AppColors.slateSecondary,
                           ),
-                          onPressed: () => setState(() => obscurePassword = !obscurePassword),
+                          onPressed: () => setState(
+                            () => obscurePassword = !obscurePassword,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
 
+                    if (errorMessage != null) ...[
+                      Text(
+                        errorMessage!,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.error,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
                     ElevatedButton(
-                      onPressed: _handleAuth,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(isLoginTab ? 'Entrar na Conta' : 'Criar Conta'),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.arrow_forward, size: 18),
-                        ],
-                      ),
+                      onPressed: loading ? null : _handleAuth,
+                      child: loading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.primaryDeep,
+                              ),
+                            )
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  isLoginTab
+                                      ? 'Entrar na Conta'
+                                      : 'Criar Conta',
+                                ),
+                                const SizedBox(width: 8),
+                                const Icon(Icons.arrow_forward, size: 18),
+                              ],
+                            ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 20),
-
-              // Social logins
-              Row(
-                children: [
-                  const Expanded(child: Divider(color: AppColors.borderOutline)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('ou acesse com', style: theme.textTheme.bodySmall),
-                  ),
-                  const Expanded(child: Divider(color: AppColors.borderOutline)),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  side: const BorderSide(color: AppColors.borderOutline),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-                onPressed: _handleAuth,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.g_mobiledata, size: 28, color: Colors.blue),
-                    const SizedBox(width: 8),
-                    Text(
-                      'Continuar com Google',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.slateDeep,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 20),
 
               // Quick skip button
@@ -405,6 +489,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              Center(
+                child: Text(
+                  'por MárcioDev e Lucas',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ),
+              const SizedBox(height: 8),
             ],
           ),
         ),

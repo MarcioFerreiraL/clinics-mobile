@@ -9,6 +9,8 @@ Aplicativo móvel para comparação de preços de exames médicos e consultas em
 - Márcio Ferreira Lima
 - Lucas Nascimento Barros
 
+> Projeto desenvolvido por **MárcioDev e Lucas**. Identidade visual em [`docs/IDENTIDADE_VISUAL.md`](docs/IDENTIDADE_VISUAL.md).
+
 ---
 
 ## Prototipação
@@ -114,7 +116,8 @@ flutter test
 
 4. Inicie o aplicativo em seu dispositivo ou emulador:
 ```bash
-flutter run
+cp .env.example .env                       # ajuste a API_BASE_URL (o .env não vai para o Git)
+flutter run --dart-define-from-file=.env
 ```
 
 ---
