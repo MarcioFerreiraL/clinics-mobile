@@ -12,8 +12,11 @@ import '../../features/exam/presentation/screens/exam_detail_screen.dart';
 import '../../features/clinic/presentation/screens/clinic_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/clinic_management/presentation/screens/clinic_dashboard_screen.dart';
+import '../../features/clinic_management/presentation/screens/clinic_exams_screen.dart';
 
 const _protectedRoutes = ['/profile', '/favorites'];
+const _clinicRoutes = ['/clinic-dashboard', '/clinic-exams'];
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
@@ -32,8 +35,23 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return path == '/' ? null : '/';
       }
       final loggedIn = auth.value != null;
-      if (path == '/') return loggedIn ? '/home' : '/login';
-      if (!loggedIn && _protectedRoutes.contains(path)) return '/login';
+      final isClinicManager =
+          auth.value?.role.toUpperCase() == 'CLINIC_MANAGER';
+      if (path == '/') {
+        return loggedIn
+            ? (isClinicManager ? '/clinic-dashboard' : '/home')
+            : '/login';
+      }
+      if (!loggedIn &&
+          (_protectedRoutes.contains(path) || _clinicRoutes.contains(path))) {
+        return '/login';
+      }
+      if (isClinicManager && (path == '/login' || path == '/home')) {
+        return '/clinic-dashboard';
+      }
+      if (loggedIn && !isClinicManager && _clinicRoutes.contains(path)) {
+        return '/home';
+      }
       return null;
     },
     routes: _routes,
@@ -78,4 +96,12 @@ final _routes = <RouteBase>[
     builder: (context, state) => const FavoritesScreen(),
   ),
   GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
+  GoRoute(
+    path: '/clinic-dashboard',
+    builder: (context, state) => const ClinicDashboardScreen(),
+  ),
+  GoRoute(
+    path: '/clinic-exams',
+    builder: (context, state) => const ClinicExamsScreen(),
+  ),
 ];

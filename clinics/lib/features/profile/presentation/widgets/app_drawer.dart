@@ -16,6 +16,7 @@ class AppDrawer extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final user = ref.watch(authProvider).value;
+    final isClinicManager = user?.role.toUpperCase() == 'CLINIC_MANAGER';
     final avatar = ApiConfig.fileUrl(user?.avatarUrl);
 
     return Drawer(
@@ -69,7 +70,11 @@ class AppDrawer extends ConsumerWidget {
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
-                                user == null ? 'Visitante' : 'Paciente',
+                                user == null
+                                    ? 'Visitante'
+                                    : isClinicManager
+                                    ? 'Gerente da clínica'
+                                    : 'Paciente',
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: AppColors.primary,
                                   fontWeight: FontWeight.w600,
@@ -120,33 +125,54 @@ class AppDrawer extends ConsumerWidget {
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 children: [
-                  _buildDrawerItem(
-                    context: context,
-                    icon: Icons.home_outlined,
-                    title: 'Início',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.go('/home');
-                    },
-                  ),
-                  _buildDrawerItem(
-                    context: context,
-                    icon: Icons.search,
-                    title: 'Buscar e Comparar',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.push('/search');
-                    },
-                  ),
-                  _buildDrawerItem(
-                    context: context,
-                    icon: Icons.favorite_border,
-                    title: 'Exames Favoritos',
-                    onTap: () {
-                      Navigator.pop(context);
-                      context.push('/favorites');
-                    },
-                  ),
+                  if (isClinicManager) ...[
+                    _buildDrawerItem(
+                      context: context,
+                      icon: Icons.dashboard_outlined,
+                      title: 'Painel da clínica',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.go('/clinic-dashboard');
+                      },
+                    ),
+                    _buildDrawerItem(
+                      context: context,
+                      icon: Icons.medical_services_outlined,
+                      title: 'Gerenciar exames',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/clinic-exams');
+                      },
+                    ),
+                  ] else ...[
+                    _buildDrawerItem(
+                      context: context,
+                      icon: Icons.home_outlined,
+                      title: 'Início',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.go('/home');
+                      },
+                    ),
+                    _buildDrawerItem(
+                      context: context,
+                      icon: Icons.search,
+                      title: 'Buscar e Comparar',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/search');
+                      },
+                    ),
+                    _buildDrawerItem(
+                      context: context,
+                      icon: Icons.favorite_border,
+                      title: 'Exames Favoritos',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/favorites');
+                      },
+                    ),
+                  ],
                   _buildDrawerItem(
                     context: context,
                     icon: Icons.person_outline,

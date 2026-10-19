@@ -8,15 +8,17 @@
 ## 1. Authentication Endpoints
 
 ### 1.1. `POST /auth/register`
-Creates a new user account (Patient or Clinic Manager).
+Creates a new patient account. Clinic manager accounts are provisioned separately and linked to one clinic through `clinics.owner_user_id`.
 
 - **Request Body:**
 ```json
 {
-  "phone": "(81) 99876-5432",
-  "password": "Password123!",
   "full_name": "Maria Silva",
-  "role": "patient"
+  "phone": "(81) 99876-5432",
+  "cpf": "529.982.247-25",
+  "email": "maria@email.com",
+  "birth_date": "1990-05-20",
+  "password": "Password123!"
 }
 ```
 - **Response (201 Created):**
@@ -140,7 +142,7 @@ Retrieves public profile info for Screen 9 (`9._perfil_p_blico_da_cl_nica`).
 
 ---
 
-## 4. Clinic Management Endpoints (Protected - `clinic_manager` + IDOR check)
+## 4. Previous clinic-management proposal (superseded)
 
 ### 4.1. `POST /clinics/:id/exams`
 Adds a new exam for the owned clinic.
@@ -175,3 +177,18 @@ Deletes an exam.
 
 - **Headers:** `Authorization: Bearer <JWT>`
 - **Response (204 No Content)**
+
+## 5. Implemented Clinic Management API
+
+All implemented management routes require `CLINIC_MANAGER`. The clinic is resolved from the authenticated user's `owner_user_id`; clients cannot choose a clinic ID. A clinic manager is associated with one clinic.
+
+| Method and path | Description |
+|---|---|
+| `GET /clinic/me/dashboard` | Active offers, detail opens, and WhatsApp redirects for the last 30 days |
+| `GET /clinic/me/exam-catalog` | Shared exam types available to offer |
+| `GET /clinic/me/exams` | Lists active and inactive clinic offers |
+| `POST /clinic/me/exams` | Creates an offer |
+| `PUT /clinic/me/exams/:id` | Updates an offer owned by the clinic |
+| `DELETE /clinic/me/exams/:id` | Deactivates an offer without deleting its history |
+
+The create/update body contains `exam_type_id`, `price`, `description`, `preparation`, `payment_methods`, and `available`. An offer's description overrides the shared catalog description for public exam details. Successful `GET /exams/:id` requests count as exam views, and `POST /exams/:id/contacts` requests count as WhatsApp clicks. The metrics are event counts, not unique people.
