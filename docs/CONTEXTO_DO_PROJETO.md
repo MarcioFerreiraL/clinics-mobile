@@ -204,4 +204,5 @@ curl -s https://api.github.com/repos/MarcioFerreiraL/clinics-backend/actions/run
 - **2026-10-13** · Site de download na raiz, PWA para iPhone em `/app/`, APK assinado com chave própria servido em `/download/clinics.apk`, `/docs` para a OpenAPI.
 - **2026-10-13** · Correções: perfil não mostrava CPF/e-mail/nascimento (resumo do login e `fromJson` sem CPF), requisições sem limite de tempo; cards de exame refeitos (local de atendimento, ilustração no preço, botão "Ver mais").
 - **2026-10-15** · Domínio fora do ar (Cloudflare 530/1033). Diagnóstico: API e VPS ok; túnel rejeitado com "Invalid tunnel secret" desde 13/10 ~19h UTC. Resolvido: o usuário gerou o token novo no painel e ele foi gravado em `/etc/cloudflared/token` (4 conexões registradas, domínio 200). Se o token novo foi colado em chat, considerar renová-lo.
+- **2026-10-19** · Site com QR codes por versão (Android → `/download/clinics.apk`, iPhone/web → `/app/`) e modo apresentação em tela cheia (`/#apresentar`). SVGs gerados offline em `static/qr-*.svg`.
 - **Próximo:** secrets do keystore no GitHub, build novo no celular, decidir APK 64 bits, atualizar docs antigas e preparar a apresentação.
