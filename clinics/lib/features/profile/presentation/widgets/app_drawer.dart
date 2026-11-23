@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../access/data/access_repository.dart';
 import '../../../../core/widgets/user_avatar.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -156,6 +157,17 @@ class AppDrawer extends ConsumerWidget {
                       context.push('/profile');
                     },
                   ),
+                  // Só contas internas (gerente, atendente, admin) veem este item.
+                  if (ref.watch(accessProvider).value?.isInternal ?? false)
+                    _buildDrawerItem(
+                      context: context,
+                      icon: Icons.admin_panel_settings_outlined,
+                      title: 'Minhas permissões',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/access');
+                      },
+                    ),
                   const Divider(
                     color: AppColors.borderOutline,
                     indent: 16,
