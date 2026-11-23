@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../../../core/widgets/clinics_loader.dart';
+import '../../../../core/widgets/loading_view.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -288,7 +288,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           // Exam Comparison Cards List
           Expanded(
             child: results.isLoading && !results.hasValue
-                ? const SkeletonCards()
+                ? const LoadingView()
                 : results.hasError && !results.hasValue
                 ? Center(
                     child: Column(

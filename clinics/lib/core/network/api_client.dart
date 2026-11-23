@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../storage/token_storage.dart';
-import 'network_activity.dart';
 import 'api_config.dart';
 
 /// Motivo do cancelamento quando a requisição estoura o limite total.
@@ -30,17 +29,6 @@ final dioProvider = Provider<Dio>((ref) {
     ),
   );
 
-  // Conta as requisições em andamento para o indicador global de carregamento.
-  // Atualiza fora do quadro atual (microtask) para não mexer em providers durante o build.
-  void track(RequestOptions o, {required bool start}) {
-    final write = o.method.toUpperCase() != 'GET';
-    final activity = ref.read(networkActivityProvider.notifier);
-    Future.microtask(
-      () =>
-          start ? activity.start(write: write) : activity.finish(write: write),
-    );
-  }
-
   // Limite total por requisição: cobre também falhas de DNS/conexão que os timeouts do Dio não pegam.
   const totalTimeout = Duration(seconds: 25);
   void startDeadline(RequestOptions o) {
@@ -57,19 +45,16 @@ final dioProvider = Provider<Dio>((ref) {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) async {
-        track(options, start: true);
         startDeadline(options);
         final token = await storage.read();
         if (token != null) options.headers['Authorization'] = 'Bearer $token';
         handler.next(options);
       },
       onResponse: (response, handler) {
-        track(response.requestOptions, start: false);
         stopDeadline(response.requestOptions);
         handler.next(response);
       },
       onError: (e, handler) async {
-        track(e.requestOptions, start: false);
         stopDeadline(e.requestOptions);
         final sentToken = e.requestOptions.headers.containsKey('Authorization');
         if (e.response?.statusCode == 401 && sentToken) {
