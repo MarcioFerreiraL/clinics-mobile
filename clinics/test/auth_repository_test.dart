@@ -71,6 +71,7 @@ void main() {
         email: 'maria@email.com',
         birthDate: '1990-05-20',
         password: 'Senha1234',
+        acceptedTerms: true,
       );
 
       expect(user.cpf, '529.982.247-25');

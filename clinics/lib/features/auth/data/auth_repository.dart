@@ -24,6 +24,7 @@ class AuthRepository {
     required String email,
     required String birthDate,
     required String password,
+    required bool acceptedTerms,
   }) => _authenticate('/auth/register', {
     'full_name': fullName,
     'phone': phone,
@@ -31,6 +32,7 @@ class AuthRepository {
     'email': email,
     'birth_date': birthDate,
     'password': password,
+    'accepted_terms': acceptedTerms,
   });
 
   /// Recupera a sessão salva; devolve null se não houver token válido.

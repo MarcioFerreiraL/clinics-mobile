@@ -32,6 +32,7 @@ class AuthNotifier extends AsyncNotifier<UserProfile?> {
     required String email,
     required String birthDate,
     required String password,
+    required bool acceptedTerms,
   }) async {
     final user = await ref
         .read(authRepositoryProvider)
@@ -42,6 +43,7 @@ class AuthNotifier extends AsyncNotifier<UserProfile?> {
           email: email,
           birthDate: birthDate,
           password: password,
+          acceptedTerms: acceptedTerms,
         );
     state = AsyncData(user);
   }

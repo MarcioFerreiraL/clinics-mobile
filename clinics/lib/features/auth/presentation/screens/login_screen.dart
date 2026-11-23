@@ -30,6 +30,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final cpfController = TextEditingController();
   final emailController = TextEditingController();
   final birthController = TextEditingController();
+  bool acceptedTerms = false;
 
   @override
   void dispose() {
@@ -71,6 +72,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         problem = 'Preencha todos os campos.';
       } else if (birth == null || birth.isAfter(DateTime.now())) {
         problem = 'Informe uma data de nascimento válida (dd/mm/aaaa).';
+      } else if (!acceptedTerms) {
+        problem = 'Aceite os termos de uso e a política de privacidade.';
       }
     }
     if (problem != null) {
@@ -98,6 +101,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           email: email,
           birthDate: toIsoDate(birth!),
           password: password,
+          acceptedTerms: acceptedTerms,
         );
       }
       if (mounted) context.go('/home');
@@ -435,6 +439,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                     ),
+                    if (!isLoginTab) ...[
+                      const SizedBox(height: 8),
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        value: acceptedTerms,
+                        onChanged: (v) =>
+                            setState(() => acceptedTerms = v ?? false),
+                        title: Text(
+                          'Li e aceito os termos de uso e a política de privacidade (LGPD). '
+                          'Usamos seus dados só para o funcionamento do app.',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 20),
 
                     if (errorMessage != null) ...[
