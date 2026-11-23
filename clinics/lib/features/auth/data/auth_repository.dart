@@ -49,6 +49,26 @@ class AuthRepository {
     }
   }
 
+  /// Pede o código de redefinição; a resposta é igual exista ou não a conta.
+  Future<void> forgotPassword(String phone) async {
+    try {
+      await _dio.post('/auth/forgot-password', data: {'phone': phone});
+    } on DioException catch (e) {
+      throw ApiException.fromDio(e);
+    }
+  }
+
+  Future<void> resetPassword(String code, String newPassword) async {
+    try {
+      await _dio.post(
+        '/auth/reset-password',
+        data: {'code': code, 'new_password': newPassword},
+      );
+    } on DioException catch (e) {
+      throw ApiException.fromDio(e);
+    }
+  }
+
   Future<void> logout() => _storage.clear();
 
   Future<UserProfile> _authenticate(

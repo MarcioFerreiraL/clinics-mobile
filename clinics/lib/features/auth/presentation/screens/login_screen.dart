@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/forgot_password_sheet.dart';
+import '../widgets/terms_dialog.dart';
 import '../../../../core/widgets/app_logo.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -439,6 +441,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                     ),
+                    if (isLoginTab)
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () => showModalBottomSheet<void>(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (_) => const ForgotPasswordSheet(),
+                          ),
+                          child: const Text('Esqueci minha senha'),
+                        ),
+                      ),
                     if (!isLoginTab) ...[
                       const SizedBox(height: 8),
                       CheckboxListTile(
@@ -451,6 +465,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           'Li e aceito os termos de uso e a política de privacidade (LGPD). '
                           'Usamos seus dados só para o funcionamento do app.',
                           style: theme.textTheme.bodySmall,
+                        ),
+                        subtitle: Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            onPressed: () => showTermsDialog(context),
+                            child: const Text('Ler os termos'),
+                          ),
                         ),
                       ),
                     ],

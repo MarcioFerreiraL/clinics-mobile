@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/widgets/user_avatar.dart';
 
@@ -19,6 +20,84 @@ import '../widgets/edit_profile_sheet.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
+
+  Future<void> _exportData(BuildContext context, WidgetRef ref) async {
+    try {
+      final json = await ref.read(profileRepositoryProvider).exportData();
+      if (!context.mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text('Seus dados'),
+          content: SingleChildScrollView(child: SelectableText(json)),
+          actions: [
+            TextButton(
+              onPressed: () => Clipboard.setData(ClipboardData(text: json)),
+              child: const Text('Copiar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Fechar'),
+            ),
+          ],
+        ),
+      );
+    } on ApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
+    final controller = TextEditingController();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Excluir minha conta'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Isso apaga sua conta, favoritos e avaliações. '
+              'Não dá para desfazer. Digite sua senha para confirmar.',
+            ),
+            TextField(
+              controller: controller,
+              obscureText: true,
+              decoration: const InputDecoration(labelText: 'Senha'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+    final password = controller.text;
+    controller.dispose();
+    if (confirmed != true) return;
+    try {
+      await ref.read(profileRepositoryProvider).deleteAccount(password);
+      await ref.read(authProvider.notifier).logout();
+      if (context.mounted) context.go('/login');
+    } on ApiException catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.message)),
+        );
+      }
+    }
+  }
 
   Future<void> _pickAvatar(BuildContext context, WidgetRef ref) async {
     final source = await showModalBottomSheet<ImageSource>(
@@ -251,6 +330,30 @@ class ProfileScreen extends ConsumerWidget {
                     isScrollControlled: true,
                     builder: (_) => const ChangePasswordSheet(),
                   ),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.download_outlined, color: AppColors.primary),
+                  title: const Text(
+                    'Exportar meus dados',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: AppColors.slateSecondary,
+                  ),
+                  onTap: () => _exportData(context, ref),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.delete_outline, color: AppColors.error),
+                  title: const Text(
+                    'Excluir minha conta',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                  trailing: const Icon(
+                    Icons.chevron_right,
+                    color: AppColors.slateSecondary,
+                  ),
+                  onTap: () => _deleteAccount(context, ref),
                 ),
               ],
             ),

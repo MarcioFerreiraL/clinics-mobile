@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http_parser/http_parser.dart';
@@ -58,6 +60,16 @@ class ProfileRepository {
       data: {'current_password': current, 'new_password': next},
     ),
   );
+
+  /// LGPD: todos os dados do titular, em JSON legível.
+  Future<String> exportData() => _call(() async {
+    final res = await _dio.get('/me/data');
+    return const JsonEncoder.withIndent('  ').convert(res.data);
+  });
+
+  /// LGPD: exclui a própria conta (exige a senha).
+  Future<void> deleteAccount(String password) =>
+      _call(() => _dio.delete('/me', data: {'password': password}));
 
   Future<Savings> savings() => _call(() async {
     final res = await _dio.get('/me/savings');
