@@ -10,10 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../profile/presentation/widgets/app_drawer.dart';
 import '../../../favorites/data/favorites_repository.dart';
 import '../../../settings/data/preferences.dart';
-import '../../data/search_repository.dart';
 import '../widgets/neighborhood_picker.dart';
-import '../../domain/exam_offer.dart';
-import '../../domain/money.dart';
 import 'search_results_screen.dart' show searchCategories;
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -396,79 +393,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Section: Em Alta em Surubim
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.trending_up,
-                              size: 20,
-                              color: AppColors.primary,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Mais buscados em Surubim',
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          'Esta semana',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontSize: 11,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Trending items
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: ref
-                        .watch(trendingProvider)
-                        .when(
-                          loading: () => const Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Center(child: CircularProgressIndicator()),
-                          ),
-                          error: (_, _) => TextButton.icon(
-                            onPressed: () => ref.invalidate(trendingProvider),
-                            icon: const Icon(Icons.refresh),
-                            label: const Text(
-                              'Não foi possível carregar. Tentar novamente',
-                            ),
-                          ),
-                          data: (items) => Column(
-                            children: [
-                              for (final TrendingExam item in items) ...[
-                                _buildTrendingCard(
-                                  context: context,
-                                  title: item.name,
-                                  subtitle:
-                                      '${item.category} • ${item.offersCount} clínicas',
-                                  minPrice: item.minPrice,
-                                  icon: Icons.biotech,
-                                  onTap: () => context.push(
-                                    '/search?query=${Uri.encodeQueryComponent(item.name)}',
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                              ],
-                            ],
-                          ),
-                        ),
-                  ),
-
-                  const SizedBox(height: 20),
-
                   // Trust Banner
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -557,103 +481,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             label: 'Perfil',
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildTrendingCard({
-    required BuildContext context,
-    required String title,
-    required String subtitle,
-    required double minPrice,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    final theme = Theme.of(context);
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.surfaceCanvas,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.borderOutline),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.atmosphericBlue,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: AppColors.primary, size: 22),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'a partir de',
-                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
-                ),
-                Text(
-                  formatPrice(minPrice),
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.atmosphericBlue,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    'Ver',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Icon(
-                    Icons.chevron_right,
-                    size: 14,
-                    color: AppColors.primary,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

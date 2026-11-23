@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_view.dart';
-import '../../../search/domain/money.dart';
 import '../../data/favorites_repository.dart';
 
 class FavoritesScreen extends ConsumerWidget {
@@ -61,7 +60,7 @@ class FavoritesScreen extends ConsumerWidget {
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  '${f.category} • a partir de ${formatPrice(f.minPrice)}',
+                                  f.category,
                                   style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ],

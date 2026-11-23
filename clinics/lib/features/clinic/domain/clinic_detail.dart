@@ -5,7 +5,6 @@ class ClinicExam {
   final String id;
   final ExamTypeRef examType;
   final double price;
-  final bool bestPrice;
   final String? preparation;
   final String? paymentMethods;
 
@@ -13,7 +12,6 @@ class ClinicExam {
     required this.id,
     required this.examType,
     required this.price,
-    required this.bestPrice,
     this.preparation,
     this.paymentMethods,
   });
@@ -22,7 +20,6 @@ class ClinicExam {
     id: json['id'] as String,
     examType: ExamTypeRef.fromJson(json['exam_type'] as Map<String, dynamic>),
     price: (json['price'] as num).toDouble(),
-    bestPrice: json['best_price'] as bool? ?? false,
     preparation: json['preparation'] as String?,
     paymentMethods: json['payment_methods'] as String?,
   );

@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/network/api_client.dart';
+import '../../../../core/device/biometric_service.dart';
+import '../../../settings/data/preferences.dart';
 import '../../data/auth_repository.dart';
 import '../../domain/entities/user_profile.dart';
 
@@ -11,6 +13,15 @@ class AuthNotifier extends AsyncNotifier<UserProfile?> {
     ref.read(sessionEventsProvider).onExpired = () =>
         state = const AsyncData(null);
     try {
+      // Com o bloqueio ligado, a sessão salva só volta depois da biometria.
+      // Se falhar, o app abre como visitante e o token continua guardado.
+      if (ref.read(biometricLockProvider) &&
+          await ref.read(tokenStorageProvider).read() != null) {
+        final ok = await ref
+            .read(biometricServiceProvider)
+            .authenticate('Confirme sua identidade para entrar no Clinics');
+        if (!ok) return null;
+      }
       return await ref.read(authRepositoryProvider).restoreSession();
     } catch (_) {
       // Sem rede ao abrir o app: segue como visitante.

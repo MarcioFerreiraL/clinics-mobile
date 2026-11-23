@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/device/biometric_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../search/presentation/widgets/neighborhood_picker.dart';
@@ -10,11 +11,34 @@ import '../../data/preferences.dart';
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
+  Future<void> _toggleBiometric(
+    BuildContext context,
+    WidgetRef ref,
+    bool enable,
+  ) async {
+    final service = ref.read(biometricServiceProvider);
+    if (enable) {
+      final messenger = ScaffoldMessenger.of(context);
+      if (!await service.isAvailable()) {
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('Configure biometria ou senha de tela no aparelho.'),
+          ),
+        );
+        return;
+      }
+      // Confirma uma vez antes de ligar, para não trancar o usuário fora.
+      if (!await service.authenticate('Confirme para ativar a biometria')) {
+        return;
+      }
+    }
+    await ref.read(biometricLockProvider.notifier).set(enable);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider).value;
     final neighborhood = ref.watch(selectedNeighborhoodProvider);
-    final alerts = ref.watch(priceAlertsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.surfaceCanvas,
@@ -65,18 +89,19 @@ class SettingsScreen extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => showNeighborhoodPicker(context),
             ),
-            SwitchListTile(
-              secondary: const Icon(
-                Icons.notifications_none,
-                color: AppColors.primary,
+            if (user != null)
+              SwitchListTile(
+                secondary: const Icon(
+                  Icons.fingerprint,
+                  color: AppColors.primary,
+                ),
+                title: const Text('Entrar com biometria'),
+                subtitle: const Text(
+                  'Pede digital, rosto ou senha do aparelho ao abrir o app',
+                ),
+                value: ref.watch(biometricLockProvider),
+                onChanged: (v) => _toggleBiometric(context, ref, v),
               ),
-              title: const Text('Alertas de queda de preço'),
-              subtitle: const Text(
-                'Avisa quando um exame favorito ficar mais barato',
-              ),
-              value: alerts,
-              onChanged: (v) => ref.read(priceAlertsProvider.notifier).set(v),
-            ),
           ]),
           const SizedBox(height: 20),
           _header(context, 'SOBRE'),

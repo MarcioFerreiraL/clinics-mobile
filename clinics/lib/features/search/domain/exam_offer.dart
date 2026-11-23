@@ -56,9 +56,6 @@ class ExamOffer {
   final ClinicSummary clinic;
   final double price;
   final double averagePrice;
-  final double savings;
-  final bool bestPrice;
-  final double? distanceKm;
   final String? preparation;
   final String? paymentMethods;
 
@@ -68,9 +65,6 @@ class ExamOffer {
     required this.clinic,
     required this.price,
     required this.averagePrice,
-    required this.savings,
-    required this.bestPrice,
-    this.distanceKm,
     this.preparation,
     this.paymentMethods,
   });
@@ -81,9 +75,6 @@ class ExamOffer {
     clinic: ClinicSummary.fromJson(json['clinic'] as Map<String, dynamic>),
     price: (json['price'] as num).toDouble(),
     averagePrice: (json['average_price'] as num?)?.toDouble() ?? 0,
-    savings: (json['savings'] as num?)?.toDouble() ?? 0,
-    bestPrice: json['best_price'] as bool? ?? false,
-    distanceKm: (json['distance_km'] as num?)?.toDouble(),
     preparation: json['preparation'] as String?,
     paymentMethods: json['payment_methods'] as String?,
   );
@@ -114,29 +105,5 @@ class Page<T> {
     total: json['total'] as int,
     page: json['page'] as int,
     totalPages: json['total_pages'] as int,
-  );
-}
-
-class TrendingExam {
-  final String id;
-  final String name;
-  final String category;
-  final double minPrice;
-  final int offersCount;
-
-  const TrendingExam({
-    required this.id,
-    required this.name,
-    required this.category,
-    required this.minPrice,
-    required this.offersCount,
-  });
-
-  factory TrendingExam.fromJson(Map<String, dynamic> json) => TrendingExam(
-    id: json['id'] as String,
-    name: json['name'] as String,
-    category: json['category'] as String,
-    minPrice: (json['min_price'] as num).toDouble(),
-    offersCount: json['offers_count'] as int,
   );
 }

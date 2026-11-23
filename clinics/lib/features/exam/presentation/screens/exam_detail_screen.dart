@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/price_history_card.dart';
 import '../../../../core/widgets/loading_view.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -254,18 +255,6 @@ class _ExamBody extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
-                      if (exam.bestPrice || exam.savings > 0) ...[
-                        Text(
-                          exam.bestPrice
-                              ? 'Melhor preço • economia de ${formatPrice(exam.savings)}'
-                              : 'Economize ${formatPrice(exam.savings)} (média ${formatPrice(exam.averagePrice)})',
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            color: AppColors.successText,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                      ],
                       Text(
                         exam.paymentMethods ?? '',
                         style: theme.textTheme.bodySmall?.copyWith(
@@ -289,6 +278,8 @@ class _ExamBody extends ConsumerWidget {
             ),
 
             const SizedBox(height: 16),
+
+            PriceHistoryCard(examId: exam.id),
 
             // Preparation & Guidelines Card
             Container(

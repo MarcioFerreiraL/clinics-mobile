@@ -27,12 +27,12 @@ class NeighborhoodNotifier extends Notifier<String?> {
 final selectedNeighborhoodProvider =
     NotifierProvider<NeighborhoodNotifier, String?>(NeighborhoodNotifier.new);
 
-/// Liga/desliga os alertas de queda de preço dos favoritos.
-class PriceAlertsNotifier extends Notifier<bool> {
-  static const _key = 'price_alerts';
+/// Pede biometria (ou a senha do aparelho) ao abrir o app com a conta já conectada.
+class BiometricLockNotifier extends Notifier<bool> {
+  static const _key = 'biometric_lock';
 
   @override
-  bool build() => ref.watch(sharedPreferencesProvider).getBool(_key) ?? true;
+  bool build() => ref.watch(sharedPreferencesProvider).getBool(_key) ?? false;
 
   Future<void> set(bool enabled) async {
     await ref.read(sharedPreferencesProvider).setBool(_key, enabled);
@@ -40,6 +40,6 @@ class PriceAlertsNotifier extends Notifier<bool> {
   }
 }
 
-final priceAlertsProvider = NotifierProvider<PriceAlertsNotifier, bool>(
-  PriceAlertsNotifier.new,
+final biometricLockProvider = NotifierProvider<BiometricLockNotifier, bool>(
+  BiometricLockNotifier.new,
 );

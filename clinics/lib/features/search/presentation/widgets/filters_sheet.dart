@@ -139,18 +139,6 @@ class _FiltersSheetState extends ConsumerState<_FiltersSheet> {
               ],
             ),
             const SizedBox(height: 8),
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              title: const Text('Somente o melhor preço'),
-              subtitle: const Text(
-                'Mostra só a oferta mais barata de cada exame',
-              ),
-              value: _filters.bestPriceOnly,
-              onChanged: (v) => setState(
-                () => _filters = _filters.copyWith(bestPriceOnly: v),
-              ),
-            ),
-            const SizedBox(height: 8),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, _filters),
               child: const Text('Aplicar filtros'),

@@ -7,7 +7,6 @@ import '../../../../core/widgets/loading_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/device/location_service.dart';
 import '../../../../core/network/api_exception.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../exam/presentation/open_exam_whatsapp.dart';
@@ -49,7 +48,6 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
   late SearchFilters _filters;
   String _sortBy = 'price'; // price, rating, name
   Timer? _debounce;
-  ({double lat, double lng})? _position;
 
   @override
   void initState() {
@@ -60,27 +58,6 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
     _filters = SearchFilters(
       neighborhood: ref.read(selectedNeighborhoodProvider),
     );
-  }
-
-  Future<void> _onSortChanged(String value) async {
-    if (value != 'distance') {
-      setState(() => _sortBy = value);
-      return;
-    }
-    try {
-      final position = await LocationService().currentPosition();
-      if (mounted) {
-        setState(() {
-          _position = position;
-          _sortBy = value;
-        });
-      }
-    } on LocationException catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
-      }
-    }
   }
 
   void _onQueryChanged(String value) {
@@ -106,8 +83,6 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           query: _query,
           category: _selectedCategory,
           sortBy: _sortBy,
-          lat: _sortBy == 'distance' ? _position?.lat : null,
-          lng: _sortBy == 'distance' ? _position?.lng : null,
           filters: _filters,
         ),
       ),
@@ -246,16 +221,6 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                         ),
                       ),
                       DropdownMenuItem(
-                        value: 'distance',
-                        child: Text(
-                          'Mais Próximo',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      DropdownMenuItem(
                         value: 'rating',
                         child: Text(
                           'Melhor Avaliação',
@@ -277,7 +242,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                       ),
                     ],
                     onChanged: (val) {
-                      if (val != null) _onSortChanged(val);
+                      if (val != null) setState(() => _sortBy = val);
                     },
                   ),
                 ),
@@ -435,8 +400,6 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                                   if (clinic.neighborhood != null)
                                     clinic.neighborhood!,
                                   'Surubim - PE',
-                                  if (exam.distanceKm != null)
-                                    '${exam.distanceKm!.toStringAsFixed(1).replaceAll('.', ',')} km',
                                 ].join(' • '),
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontSize: 11,
@@ -527,24 +490,6 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
                                                 color: AppColors.primary,
                                               ),
                                         ),
-                                        if (exam.bestPrice)
-                                          Text(
-                                            'Melhor preço',
-                                            style: theme.textTheme.labelSmall
-                                                ?.copyWith(
-                                                  color: AppColors.mintDeep,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          )
-                                        else if (exam.savings > 0)
-                                          Text(
-                                            'Economize ${formatPrice(exam.savings)}',
-                                            style: theme.textTheme.labelSmall
-                                                ?.copyWith(
-                                                  color: AppColors.mintDeep,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
                                         Text(
                                           exam.paymentMethods ?? '',
                                           style: theme.textTheme.bodySmall

@@ -54,8 +54,6 @@ class ExamDetail {
   final ExamTypeRef examType;
   final double price;
   final double averagePrice;
-  final double savings;
-  final bool bestPrice;
   final String? preparation;
   final String? paymentMethods;
   final ExamClinic clinic;
@@ -65,8 +63,6 @@ class ExamDetail {
     required this.examType,
     required this.price,
     required this.averagePrice,
-    required this.savings,
-    required this.bestPrice,
     this.preparation,
     this.paymentMethods,
     required this.clinic,
@@ -77,8 +73,6 @@ class ExamDetail {
     examType: ExamTypeRef.fromJson(json['exam_type'] as Map<String, dynamic>),
     price: (json['price'] as num).toDouble(),
     averagePrice: (json['average_price'] as num?)?.toDouble() ?? 0,
-    savings: (json['savings'] as num?)?.toDouble() ?? 0,
-    bestPrice: json['best_price'] as bool? ?? false,
     preparation: json['preparation'] as String?,
     paymentMethods: json['payment_methods'] as String?,
     clinic: ExamClinic.fromJson(json['clinic'] as Map<String, dynamic>),
@@ -87,15 +81,10 @@ class ExamDetail {
 
 class ContactResult {
   final String whatsappUrl;
-  final double estimatedSavings;
 
-  const ContactResult({
-    required this.whatsappUrl,
-    required this.estimatedSavings,
-  });
+  const ContactResult({required this.whatsappUrl});
 
   factory ContactResult.fromJson(Map<String, dynamic> json) => ContactResult(
     whatsappUrl: json['whatsapp_url'] as String,
-    estimatedSavings: (json['estimated_savings'] as num?)?.toDouble() ?? 0,
   );
 }

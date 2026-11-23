@@ -41,21 +41,6 @@ class NotificationService {
     _ready = true;
   }
 
-  Future<void> showPriceDrop({
-    required int id,
-    required String examName,
-    required String newPrice,
-  }) async {
-    if (!isSupported) return;
-    await _init();
-    await _plugin.show(
-      id: id,
-      title: 'Preço caiu: $examName',
-      body: 'Agora a partir de $newPrice. Toque para comparar.',
-      notificationDetails: _details,
-    );
-  }
-
   /// Agenda o lembrete de preparo (ex.: jejum) para [when].
   Future<void> scheduleReminder({
     required int id,

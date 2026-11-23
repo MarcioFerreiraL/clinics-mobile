@@ -13,7 +13,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/input_masks.dart';
 import '../../../auth/domain/entities/user_profile.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
-import '../../../search/domain/money.dart';
 import '../../data/profile_repository.dart';
 import '../widgets/change_password_sheet.dart';
 import '../widgets/edit_profile_sheet.dart';
@@ -148,7 +147,6 @@ class ProfileScreen extends ConsumerWidget {
     final user = ref.watch(authProvider).value;
     if (user == null) return const SizedBox.shrink();
     final avatar = ApiConfig.fileUrl(user.avatarUrl);
-    final savings = ref.watch(savingsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.surfaceCanvas,
@@ -208,55 +206,6 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.atmosphericBlueLight,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.atmosphericBlue),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.savings_outlined,
-                    color: AppColors.primary,
-                    size: 32,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Total economizado',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Text(
-                          savings.when(
-                            data: (s) => formatPrice(s.total),
-                            loading: () => '...',
-                            error: (_, _) => '—',
-                          ),
-                          style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        if (savings.hasValue)
-                          Text(
-                            '${savings.value!.contactsCount} contato(s) com clínicas',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 11,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 20),
             _sectionHeader(context, 'DADOS DA CONTA'),
             const SizedBox(height: 8),

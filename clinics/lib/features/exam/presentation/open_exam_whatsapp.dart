@@ -5,7 +5,7 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/utils/whatsapp_helper.dart';
 import '../data/exam_repository.dart';
 
-/// Registra o contato na API (UC07) e abre o WhatsApp da clínica.
+/// Busca o link na API e abre o WhatsApp da clínica.
 Future<void> openExamWhatsApp(
   BuildContext context,
   WidgetRef ref,
@@ -14,7 +14,7 @@ Future<void> openExamWhatsApp(
   try {
     final contact = await ref
         .read(examRepositoryProvider)
-        .registerContact(examId);
+        .whatsappLink(examId);
     if (context.mounted) {
       await WhatsAppHelper.openUrl(context, contact.whatsappUrl);
     }

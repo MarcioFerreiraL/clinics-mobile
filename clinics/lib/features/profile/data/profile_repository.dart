@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exception.dart';
 import '../../auth/domain/entities/user_profile.dart';
-import '../domain/savings.dart';
 
 class ProfileRepository {
   final Dio _dio;
@@ -70,17 +69,8 @@ class ProfileRepository {
   /// LGPD: exclui a própria conta (exige a senha).
   Future<void> deleteAccount(String password) =>
       _call(() => _dio.delete('/me', data: {'password': password}));
-
-  Future<Savings> savings() => _call(() async {
-    final res = await _dio.get('/me/savings');
-    return Savings.fromJson(res.data as Map<String, dynamic>);
-  });
 }
 
 final profileRepositoryProvider = Provider(
   (ref) => ProfileRepository(ref.watch(dioProvider)),
-);
-
-final savingsProvider = FutureProvider.autoDispose(
-  (ref) => ref.watch(profileRepositoryProvider).savings(),
 );

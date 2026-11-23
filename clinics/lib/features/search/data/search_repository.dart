@@ -10,16 +10,12 @@ class SearchQuery {
   final String query;
   final String category;
   final String sortBy;
-  final double? lat;
-  final double? lng;
   final SearchFilters filters;
 
   const SearchQuery({
     this.query = '',
     this.category = 'Todos',
     this.sortBy = 'price',
-    this.lat,
-    this.lng,
     this.filters = SearchFilters.none,
   });
 
@@ -29,18 +25,15 @@ class SearchQuery {
       other.query == query &&
       other.category == category &&
       other.sortBy == sortBy &&
-      other.lat == lat &&
-      other.lng == lng &&
       other.filters == filters;
 
   @override
-  int get hashCode => Object.hash(query, category, sortBy, lat, lng, filters);
+  int get hashCode => Object.hash(query, category, sortBy, filters);
 
   Map<String, dynamic> toParams(int page) => {
     if (query.trim().isNotEmpty) 'query': query.trim(),
     if (category != 'Todos') 'category': category,
     'sort_by': sortBy,
-    if (lat != null && lng != null) ...{'lat': lat, 'lng': lng},
     ...filters.toParams(),
     'page': page,
     'size': 50,
@@ -62,17 +55,6 @@ class SearchRepository {
         res.data as Map<String, dynamic>,
         ExamOffer.fromJson,
       );
-    } on DioException catch (e) {
-      throw ApiException.fromDio(e);
-    }
-  }
-
-  Future<List<TrendingExam>> trending() async {
-    try {
-      final res = await _dio.get('/exam-types/trending');
-      return (res.data as List)
-          .map((e) => TrendingExam.fromJson(e as Map<String, dynamic>))
-          .toList();
     } on DioException catch (e) {
       throw ApiException.fromDio(e);
     }
@@ -109,7 +91,3 @@ final searchResultsProvider = FutureProvider.autoDispose
     .family<Page<ExamOffer>, SearchQuery>(
       (ref, query) => ref.watch(searchRepositoryProvider).search(query),
     );
-
-final trendingProvider = FutureProvider.autoDispose(
-  (ref) => ref.watch(searchRepositoryProvider).trending(),
-);
