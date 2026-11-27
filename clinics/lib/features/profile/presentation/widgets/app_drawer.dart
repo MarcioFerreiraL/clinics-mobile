@@ -168,6 +168,17 @@ class AppDrawer extends ConsumerWidget {
                         context.push('/access');
                       },
                     ),
+                  // Painel admin só para quem tem a permissão (o servidor valida de novo).
+                  if (ref.watch(accessProvider).value?.can('conta.listar') ?? false)
+                    _buildDrawerItem(
+                      context: context,
+                      icon: Icons.dashboard_customize_outlined,
+                      title: 'Painel Admin',
+                      onTap: () {
+                        Navigator.pop(context);
+                        context.push('/admin');
+                      },
+                    ),
                   const Divider(
                     color: AppColors.borderOutline,
                     indent: 16,

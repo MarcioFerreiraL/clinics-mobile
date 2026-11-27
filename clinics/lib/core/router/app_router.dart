@@ -12,9 +12,10 @@ import '../../features/exam/presentation/screens/exam_detail_screen.dart';
 import '../../features/clinic/presentation/screens/clinic_profile_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/access/presentation/access_screen.dart';
+import '../../features/admin/presentation/admin_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
 
-const _protectedRoutes = ['/profile', '/favorites', '/access'];
+const _protectedRoutes = ['/profile', '/favorites', '/access', '/admin'];
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier<int>(0);
@@ -80,4 +81,5 @@ final _routes = <RouteBase>[
   ),
   GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
   GoRoute(path: '/access', builder: (context, state) => const AccessScreen()),
+  GoRoute(path: '/admin', builder: (context, state) => const AdminScreen()),
 ];
